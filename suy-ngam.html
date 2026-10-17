@@ -18,6 +18,8 @@
       <a href="tim-kiem.html">Tìm kiếm</a>
       <a href="ke-hoach.html">Kế hoạch</a>
       <a href="suy-ngam.html" aria-current="page">Suy ngẫm</a>
+      <a href="chu-de.html">Chủ đề</a>
+      <a href="danh-dau.html">Đã lưu</a>
     </nav>
     <button class="theme-toggle" aria-label="Đổi giao diện sáng/tối"><span class="theme-label">🌙 Tối</span></button>
   </div>
@@ -36,9 +38,19 @@
   <article class="card" id="dev-card">
     <h2 id="dev-date"></h2>
     <div id="dev-body"><p class="loading">Đang tải…</p></div>
+    <div class="btn-row"><button class="btn small" id="dev-audio-btn">🔊 Nghe bài này</button></div>
     <p class="dev-footer">C. H. Spurgeon — Sổ Séc Của Đức Tin (bản dịch AI, chưa duyệt)</p>
   </article>
 </main>
+
+<nav class="tabbar" aria-label="Điều hướng">
+  <a href="index.html"><span class="tico">🏠</span>Trang chủ</a>
+  <a href="doc.html"><span class="tico">📜</span>Đọc</a>
+  <a href="tim-kiem.html"><span class="tico">🔎</span>Tìm kiếm</a>
+  <a href="chu-de.html"><span class="tico">📚</span>Chủ đề</a>
+  <a href="danh-dau.html"><span class="tico">🔖</span>Đã lưu</a>
+</nav>
+
 
 <footer class="site-footer">
   <p>Bản Kinh Thánh 1934 (public domain) • Ghi chú AI soạn, chưa được mục sư duyệt</p>
@@ -53,6 +65,26 @@ document.addEventListener('DOMContentLoaded', function () {
   var cur = new Date();
   cur.setHours(0, 0, 0, 0);
   var datePick = document.getElementById('date-pick');
+  var devAudioBtn = document.getElementById('dev-audio-btn');
+  var devAudioCtrl = null;
+  var devParts = [];
+
+  function stopDevAudio() {
+    if (devAudioCtrl) { devAudioCtrl.stop(); devAudioCtrl = null; }
+    devAudioBtn.innerHTML = '🔊 Nghe bài này';
+  }
+  devAudioBtn.addEventListener('click', function () {
+    if (!('speechSynthesis' in window)) {
+      devAudioBtn.innerHTML = '⚠️ Máy này không hỗ trợ đọc thành tiếng';
+      return;
+    }
+    if (devAudioCtrl) { stopDevAudio(); return; }
+    if (!devParts.length) return;
+    devAudioBtn.innerHTML = '⏹️ Dừng đọc';
+    devAudioCtrl = HKT.speakSequence(devParts, null, stopDevAudio);
+    if (!devAudioCtrl) stopDevAudio();
+  });
+  window.addEventListener('pagehide', stopDevAudio);
 
   HKT.loadJSON('data/suyngam.json').then(function (d) {
     devs = d;
@@ -96,8 +128,12 @@ document.addEventListener('DOMContentLoaded', function () {
     var body = document.getElementById('dev-body');
     if (!dev) {
       body.innerHTML = '<p>Chưa có bài suy ngẫm cho ngày này.</p>';
+      devParts = [];
+      stopDevAudio();
       return;
     }
+    devParts = [dev.title, dev.verse + '. ' + dev.ref].concat(dev.paras || []);
+    stopDevAudio();
     var html = '<p class="card-title">' + esc(dev.title) + '</p>' +
       '<blockquote class="dev-verse">“' + esc(dev.verse) + '”<span class="ref">' + esc(dev.ref) + '</span></blockquote>' +
       '<div class="dev-body">' +

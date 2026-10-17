@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#141f36">
+<title>Chủ đề học Kinh Thánh — Kinh Thánh Mỗi Ngày</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <span class="brand"><a href="index.html">✝️ Kinh Thánh Mỗi Ngày</a></span>
+    <nav class="topnav">
+      <a href="doc.html">Đọc</a>
+      <a href="tim-kiem.html">Tìm kiếm</a>
+      <a href="ke-hoach.html">Kế hoạch</a>
+      <a href="suy-ngam.html">Suy ngẫm</a>
+      <a href="chu-de.html" aria-current="page">Chủ đề</a>
+      <a href="danh-dau.html">Đã lưu</a>
+    </nav>
+    <button class="theme-toggle" aria-label="Đổi giao diện sáng/tối"><span class="theme-label">🌙 Tối</span></button>
+  </div>
+</header>
+
+<main id="main">
+  <p class="loading">Đang tải…</p>
+</main>
+
+<nav class="tabbar" aria-label="Điều hướng">
+  <a href="index.html"><span class="tico">🏠</span>Trang chủ</a>
+  <a href="doc.html"><span class="tico">📜</span>Đọc</a>
+  <a href="tim-kiem.html"><span class="tico">🔎</span>Tìm kiếm</a>
+  <a href="chu-de.html" aria-current="page"><span class="tico">📚</span>Chủ đề</a>
+  <a href="danh-dau.html"><span class="tico">🔖</span>Đã lưu</a>
+</nav>
+
+<footer class="site-footer">
+  <p>Bản Kinh Thánh 1934 (public domain) • Ghi chú AI soạn, chưa được mục sư duyệt</p>
+  <p>Soli Deo Gloria</p>
+</footer>
+
+<script src="app.js" defer></script>
+<script defer>
+document.addEventListener('DOMContentLoaded', function () {
+  HKT.initTheme();
+  var main = document.getElementById('main');
+  var books = null, bookData = {};
+
+  Promise.all([HKT.loadBooks(), HKT.loadJSON('data/topics.json')])
+    .then(function (res) {
+      books = res[0];
+      var topics = res[1] || [];
+      var q = new URLSearchParams(window.location.search);
+      var t = q.get('t');
+      var topic = topics.find(function (x) { return x.id === t; });
+      if (topic) renderDetail(topic);
+      else renderList(topics);
+    })
+    .catch(function () {
+      main.innerHTML = '<p>Không tải được dữ liệu chủ đề.</p>';
+    });
+
+  function renderList(topics) {
+    var html = '<h1 class="chapter-head">📚 Chủ đề học Kinh Thánh</h1>' +
+      '<p class="muted" style="text-align:center;margin-top:-0.6rem">Học theo chủ đề — từ Năm Sola, TULIP đến đời sống hằng ngày</p>';
+    // group: sola / tulip / life
+    var groups = [
+      { id: 'sola', title: 'Năm Sola', match: function (id) { return id.indexOf('sola') === 0; } },
+      { id: 'tulip', title: 'TULIP — Năm điểm Cải Chánh', match: function (id) { return id.indexOf('tulip') === 0; } },
+      { id: 'life', title: 'Đời sống Cơ Đốc', match: function () { return true; } }
+    ];
+    groups.forEach(function (g) {
+      var items = topics.filter(function (t) { return g.match(t.id); });
+      if (!items.length) return;
+      html += '<h2 style="margin:1.4rem 0 0.6rem">' + esc(g.title) + '</h2>';
+      items.forEach(function (t) {
+        html += '<a class="card topic-card" href="chu-de.html?t=' + esc(t.id) + '">' +
+          '<img class="topic-thumb" src="img/topics/' + esc(t.id) + '.jpg" alt="" loading="lazy" onerror="this.remove()">' +
+          '<h3>' + esc(t.title) + '</h3>' +
+          '<p>' + esc(t.intro) + '</p>' +
+          '<span class="count">' + (t.verses ? t.verses.length : 0) + ' câu Kinh Thánh →</span>' +
+          '</a>';
+      });
+    });
+    main.innerHTML = html;
+  }
+
+  function loadBookData(bookId) {
+    if (bookData[bookId]) return Promise.resolve(bookData[bookId]);
+    return HKT.loadBook(bookId).then(function (d) {
+      bookData[bookId] = d;
+      return d;
+    });
+  }
+
+  function renderDetail(topic) {
+    document.title = topic.title + ' — Kinh Thánh Mỗi Ngày';
+    var verses = topic.verses || [];
+    // preload the books needed for verse text snippets
+    var need = {};
+    verses.forEach(function (v) {
+      var k = HKT.keyToIndices(books, v.key);
+      if (k.b >= 0) need[books[k.b].id] = 1;
+    });
+    main.innerHTML = '<p class="loading">Đang tải…</p>';
+    Promise.all(Object.keys(need).map(loadBookData)).then(function () {
+      var html = '<div class="btn-row" style="margin-bottom:0.4rem">' +
+        '<a class="btn small secondary" href="chu-de.html">← Tất cả chủ đề</a></div>' +
+        '<img class="topic-hero" src="img/topics/' + esc(topic.id) + '.jpg" alt="" loading="lazy" onerror="this.remove()">' +
+        '<h1 class="chapter-head">' + esc(topic.title) + '</h1>' +
+        '<section class="card"><p>' + esc(topic.intro) + '</p>' +
+        '<p class="src">Nguồn: AI soạn, chưa được mục sư duyệt</p></section>';
+      verses.forEach(function (v) {
+        var k = HKT.keyToIndices(books, v.key);
+        var link = k.b >= 0 ? 'doc.html?b=' + k.b + '&c=' + k.c + '#v' + k.v : '#';
+        var text = '';
+        if (k.b >= 0) {
+          var d = bookData[books[k.b].id];
+          var ch = d && d.ch[k.c - 1];
+          text = (ch && ch[k.v - 1]) || '';
+        }
+        html += '<div class="topic-verse">' +
+          '<a class="tv-ref" href="' + link + '">' + esc(v.ref || HKT.keyToRef(books, v.key)) + '</a>' +
+          (text ? '<p class="tv-text">“' + esc(text) + '”</p>' : '') +
+          (v.note ? '<p class="tv-note">' + esc(v.note) + '</p>' : '') +
+          '</div>';
+      });
+      main.innerHTML = html;
+    }).catch(function () {
+      main.innerHTML = '<p>Không tải được nội dung chủ đề.</p>';
+    });
+  }
+
+  function esc(s) {
+    return (s || '').replace(/[&<>"']/g, function (ch) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
+    });
+  }
+});
+</script>
+</body>
+</html>

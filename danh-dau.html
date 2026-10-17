@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#141f36">
+<title>Đã lưu — Kinh Thánh Mỗi Ngày</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <span class="brand"><a href="index.html">✝️ Kinh Thánh Mỗi Ngày</a></span>
+    <nav class="topnav">
+      <a href="doc.html">Đọc</a>
+      <a href="tim-kiem.html">Tìm kiếm</a>
+      <a href="ke-hoach.html">Kế hoạch</a>
+      <a href="suy-ngam.html">Suy ngẫm</a>
+      <a href="chu-de.html">Chủ đề</a>
+      <a href="danh-dau.html" aria-current="page">Đã lưu</a>
+    </nav>
+    <button class="theme-toggle" aria-label="Đổi giao diện sáng/tối"><span class="theme-label">🌙 Tối</span></button>
+  </div>
+</header>
+
+<main>
+  <h1 class="chapter-head">🔖 Đã lưu</h1>
+  <p class="muted" style="text-align:center;margin-top:-0.6rem">Đánh dấu, tô sáng và ghi chú của bạn — lưu trên máy này</p>
+
+  <div class="saved-tabs" role="tablist">
+    <button id="tab-bm" class="on" role="tab">🔖 Đánh dấu</button>
+    <button id="tab-hl" role="tab">🖍️ Tô sáng</button>
+    <button id="tab-nt" role="tab">📝 Ghi chú</button>
+  </div>
+
+  <section class="card" id="saved-list"><p class="loading">Đang tải…</p></section>
+</main>
+
+<nav class="tabbar" aria-label="Điều hướng">
+  <a href="index.html"><span class="tico">🏠</span>Trang chủ</a>
+  <a href="doc.html"><span class="tico">📜</span>Đọc</a>
+  <a href="tim-kiem.html"><span class="tico">🔎</span>Tìm kiếm</a>
+  <a href="chu-de.html"><span class="tico">📚</span>Chủ đề</a>
+  <a href="danh-dau.html" aria-current="page"><span class="tico">🔖</span>Đã lưu</a>
+</nav>
+
+<footer class="site-footer">
+  <p>Bản Kinh Thánh 1934 (public domain) • Ghi chú AI soạn, chưa được mục sư duyệt</p>
+  <p>Soli Deo Gloria</p>
+</footer>
+
+<script src="app.js" defer></script>
+<script defer>
+document.addEventListener('DOMContentLoaded', function () {
+  HKT.initTheme();
+  var books = null, bookData = {}; // bookId -> book JSON
+  var mode = 'bm';
+  var listEl = document.getElementById('saved-list');
+
+  document.querySelectorAll('.saved-tabs button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      document.querySelectorAll('.saved-tabs button').forEach(function (x) { x.classList.remove('on'); });
+      b.classList.add('on');
+      mode = b.id.replace('tab-', '');
+      render();
+    });
+  });
+
+  HKT.loadBooks().then(function (b) {
+    books = b;
+    render();
+  }).catch(function () {
+    listEl.innerHTML = '<p>Không tải được dữ liệu.</p>';
+  });
+
+  function loadBookData(bookId) {
+    if (bookData[bookId]) return Promise.resolve(bookData[bookId]);
+    return HKT.loadBook(bookId).then(function (d) {
+      bookData[bookId] = d;
+      return d;
+    });
+  }
+
+  function verseText(key) {
+    var k = HKT.keyToIndices(books, key);
+    if (k.b < 0) return Promise.resolve('');
+    var bookId = books[k.b].id;
+    return loadBookData(bookId).then(function (d) {
+      var ch = d.ch[k.c - 1];
+      return (ch && ch[k.v - 1]) || '';
+    }).catch(function () { return ''; });
+  }
+
+  function verseLink(key) {
+    var k = HKT.keyToIndices(books, key);
+    return 'doc.html?b=' + k.b + '&c=' + k.c + '#v' + k.v;
+  }
+
+  function render() {
+    var marks = HKT.getMarks();
+    var store = marks[mode] || {};
+    var keys = Object.keys(store);
+    if (!keys.length) {
+      var emptyMsg = mode === 'bm' ? 'Chưa có câu nào được đánh dấu. Chạm vào một câu khi đọc để đánh dấu 🔖.'
+        : mode === 'hl' ? 'Chưa có câu nào được tô sáng. Chạm vào một câu khi đọc để tô sáng 🖍️.'
+        : 'Chưa có ghi chú nào. Chạm vào một câu khi đọc để viết ghi chú 📝.';
+      listEl.innerHTML = '<p class="empty-note">' + esc(emptyMsg) + '</p>';
+      return;
+    }
+    listEl.innerHTML = '<p class="loading">Đang tải…</p>';
+    Promise.all(keys.map(verseText)).then(function (texts) {
+      var allMarks = HKT.getMarks();
+      var html = '';
+      keys.forEach(function (key, i) {
+        var ref = HKT.keyToRef(books, key);
+        var chip = mode === 'hl' ? '<span class="hl-chip ' + esc(store[key]) + '"></span>' : '';
+        var noteTxt = mode === 'nt' ? store[key] : allMarks.nt[key];
+        var noteHtml = noteTxt ? '<p class="sv-note">“' + esc(noteTxt) + '”</p>' : '';
+        html += '<div class="saved-item">' +
+          '<a class="sv-ref" href="' + verseLink(key) + '">' + chip + esc(ref) + '</a>' +
+          '<p class="sv-text">' + esc(texts[i]) + '</p>' +
+          noteHtml +
+          '<button class="sv-del" data-del="' + esc(key) + '">Xóa</button>' +
+          '</div>';
+      });
+      listEl.innerHTML = html;
+      listEl.querySelectorAll('[data-del]').forEach(function (b) {
+        b.addEventListener('click', function () {
+          var marks = HKT.getMarks();
+          delete marks[mode][b.dataset.del];
+          HKT.saveMarks(marks);
+          render();
+        });
+      });
+    });
+  }
+
+  function esc(s) {
+    return (s || '').replace(/[&<>"']/g, function (ch) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
+    });
+  }
+});
+</script>
+</body>
+</html>

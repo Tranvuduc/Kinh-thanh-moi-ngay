@@ -117,6 +117,91 @@
     return { b: b, c: c };
   }
 
+  /* ---------- verse marks: bookmarks, highlights, personal notes ---------- */
+  var MARKS_KEY = 'hkt-marks';
+  var HL_COLORS = ['yellow', 'green', 'blue', 'pink'];
+
+  function getMarks() {
+    var m = storeGet(MARKS_KEY, null);
+    if (!m || typeof m !== 'object') m = {};
+    if (!m.bm) m.bm = {};
+    if (!m.hl) m.hl = {};
+    if (!m.nt) m.nt = {};
+    return m;
+  }
+  function saveMarks(m) { storeSet(MARKS_KEY, m); }
+
+  /** Canonical verse key: "joh:3:16". */
+  function verseKey(bookId, c, v) { return bookId + ':' + c + ':' + v; }
+
+  /** "joh:3:16" -> {b: bookIndex, c, v} using the books array. */
+  function keyToIndices(books, key) {
+    var p = (key || '').split(':');
+    var bi = -1;
+    if (books) books.forEach(function (bk, i) { if (bk.id === p[0]) bi = i; });
+    return { b: bi, c: parseInt(p[1], 10) || 1, v: parseInt(p[2], 10) || 1 };
+  }
+
+  /** "joh:3:16" -> "Giăng 3:16" using the books array. */
+  function keyToRef(books, key) {
+    var k = keyToIndices(books, key);
+    if (k.b < 0 || !books[k.b]) return key;
+    return books[k.b].name + ' ' + k.c + ':' + k.v;
+  }
+
+  /* ---------- cross references (data/xref/<bookId>.json, lazy) ---------- */
+  var xrefCache = {};
+  function loadXref(bookId) {
+    if (xrefCache[bookId]) return xrefCache[bookId];
+    var p = loadJSON('data/xref/' + bookId + '.json').catch(function () { return {}; });
+    xrefCache[bookId] = p;
+    return p;
+  }
+
+  /* ---------- audio: read aloud via the device's own speech engine ----------
+     Free, on-device, no downloads. Parts are spoken one by one so the UI
+     can highlight each part as it is read. */
+  function speakSequence(parts, onPart, onDone) {
+    var synth = window.speechSynthesis;
+    if (!synth || !parts || !parts.length) return null;
+    try { synth.getVoices(); } catch (e) {} // prime voice list
+    var ctrl = { stopped: false, i: 0 };
+    function viVoice() {
+      try {
+        var vs = synth.getVoices() || [];
+        for (var i = 0; i < vs.length; i++) {
+          if (vs[i].lang && vs[i].lang.toLowerCase().indexOf('vi') === 0) return vs[i];
+        }
+      } catch (e) {}
+      return null;
+    }
+    var vv = viVoice();
+    function next() {
+      if (ctrl.stopped) return;
+      if (ctrl.i >= parts.length) {
+        ctrl.stopped = true;
+        if (onDone) onDone();
+        return;
+      }
+      var idx = ctrl.i;
+      var u = new SpeechSynthesisUtterance(parts[idx]);
+      u.lang = 'vi-VN';
+      u.rate = 0.95;
+      if (vv) u.voice = vv;
+      u.onend = function () { ctrl.i++; next(); };
+      u.onerror = function () { ctrl.stopped = true; if (onDone) onDone(); };
+      if (onPart) { try { onPart(idx); } catch (e) {} }
+      synth.speak(u);
+    }
+    ctrl.stop = function () {
+      ctrl.stopped = true;
+      try { synth.cancel(); } catch (e) {}
+    };
+    try { synth.cancel(); } catch (e) {}
+    next();
+    return ctrl;
+  }
+
   window.HKT = {
     loadJSON: loadJSON,
     loadBooks: loadBooks,
@@ -129,7 +214,15 @@
     toggleTheme: toggleTheme,
     storeGet: storeGet,
     storeSet: storeSet,
-    readChapterParams: readChapterParams
+    readChapterParams: readChapterParams,
+    getMarks: getMarks,
+    saveMarks: saveMarks,
+    verseKey: verseKey,
+    keyToIndices: keyToIndices,
+    keyToRef: keyToRef,
+    loadXref: loadXref,
+    HL_COLORS: HL_COLORS,
+    speakSequence: speakSequence
   };
 })();
 

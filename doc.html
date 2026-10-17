@@ -18,6 +18,8 @@
       <a href="tim-kiem.html">Tìm kiếm</a>
       <a href="ke-hoach.html">Kế hoạch</a>
       <a href="suy-ngam.html">Suy ngẫm</a>
+      <a href="chu-de.html">Chủ đề</a>
+      <a href="danh-dau.html">Đã lưu</a>
     </nav>
     <button class="theme-toggle" aria-label="Đổi giao diện sáng/tối"><span class="theme-label">🌙 Tối</span></button>
   </div>
@@ -32,6 +34,7 @@
   <article class="card">
     <h1 class="chapter-head" id="chapter-head">…</h1>
     <div class="scripture" id="chapter-text"><p class="loading">Đang tải…</p></div>
+    <button class="btn small" id="audio-btn" style="width:100%;margin-bottom:0.2rem">🔊 Nghe đoạn này</button>
     <div class="pager">
       <button class="btn secondary" id="prev-btn">← Đoạn trước</button>
       <button class="btn secondary" id="next-btn">Đoạn sau →</button>
@@ -44,18 +47,57 @@
   </section>
 </main>
 
-<div class="action-bar" id="action-bar">
-  <div class="ref" id="ab-ref"></div>
-  <div class="btn-row" style="margin-top:0">
-    <button class="btn small" id="ab-copy">📋 Sao chép câu</button>
-    <button class="btn small" id="ab-share">🔗 Chia sẻ</button>
-    <button class="btn small secondary" id="ab-close">Đóng</button>
+<div class="sheet-overlay" id="sheet-overlay"></div>
+<section class="sheet" id="sheet" aria-label="Thao tác với câu Kinh Thánh">
+  <div class="sheet-handle"></div>
+  <div class="sheet-head">
+    <div>
+      <div class="sheet-ref" id="sh-ref"></div>
+      <div class="sheet-text" id="sh-text"></div>
+    </div>
+    <button class="sheet-close" id="sh-close" aria-label="Đóng">✕</button>
   </div>
-</div>
+  <div class="sheet-grid">
+    <button class="btn small" id="sh-copy">📋<span>Sao chép</span></button>
+    <button class="btn small" id="sh-share">🔗<span>Chia sẻ</span></button>
+    <button class="btn small secondary" id="sh-bookmark">🔖<span>Đánh dấu</span></button>
+    <button class="btn small secondary" id="sh-highlight">🖍️<span>Tô sáng</span></button>
+    <button class="btn small secondary" id="sh-note">📝<span>Ghi chú</span></button>
+    <button class="btn small secondary" id="sh-xref">⛓️<span>Tham chiếu</span><b id="sh-xref-n"></b></button>
+  </div>
+  <div class="sheet-panel" id="sh-hl-panel" hidden>
+    <div class="hl-colors" role="group" aria-label="Chọn màu tô sáng">
+      <button data-hl="yellow" aria-label="Vàng"></button>
+      <button data-hl="green" aria-label="Xanh lá"></button>
+      <button data-hl="blue" aria-label="Xanh dương"></button>
+      <button data-hl="pink" aria-label="Hồng"></button>
+      <button class="hl-none" data-hl="">Xóa màu</button>
+    </div>
+  </div>
+  <div class="sheet-panel" id="sh-note-panel" hidden>
+    <textarea id="sh-note-text" rows="3" placeholder="Ghi chú của bạn cho câu này…"></textarea>
+    <div class="btn-row">
+      <button class="btn small" id="sh-note-save">Lưu ghi chú</button>
+      <button class="btn small secondary" id="sh-note-del">Xóa</button>
+    </div>
+  </div>
+  <div class="sheet-panel" id="sh-xref-panel" hidden>
+    <div class="xref-list" id="sh-xref-list"><p class="muted">Đang tải…</p></div>
+    <p class="xref-src">Nguồn tham chiếu: openbible.info (CC-BY), dựa trên Treasury of Scripture Knowledge (public domain).</p>
+  </div>
+</section>
+
+<nav class="tabbar" aria-label="Điều hướng">
+  <a href="index.html"><span class="tico">🏠</span>Trang chủ</a>
+  <a href="doc.html" aria-current="page"><span class="tico">📜</span>Đọc</a>
+  <a href="tim-kiem.html"><span class="tico">🔎</span>Tìm kiếm</a>
+  <a href="chu-de.html"><span class="tico">📚</span>Chủ đề</a>
+  <a href="danh-dau.html"><span class="tico">🔖</span>Đã lưu</a>
+</nav>
 
 <footer class="site-footer">
   <p>Bản Kinh Thánh 1934 (public domain) • Ghi chú AI soạn, chưa được mục sư duyệt</p>
-  <p>Soli Deo Gloria</p>
+  <p>Tham chiếu: openbible.info (CC-BY) • Soli Deo Gloria</p>
 </footer>
 
 <script src="app.js" defer></script>
@@ -66,14 +108,15 @@ document.addEventListener('DOMContentLoaded', function () {
   var cur = { b: 0, c: 1 };
   var bookSel = document.getElementById('book-sel');
   var chapSel = document.getElementById('chap-sel');
-  var selVerse = null; // {b,c,v,text}
+  var selVerse = null; // {b,c,v,key,text}
+  var xrefRefs = [];
 
-  /* ---- study notes: defensive, notes.json may not exist yet ---- */
+  /* ---- study notes ---- */
   HKT.loadJSON('data/notes.json').then(function (n) {
     notes = n || {};
     renderNotes();
   }).catch(function () {
-    notes = {}; // 404 or invalid -> no notes yet
+    notes = {};
     renderNotes();
   });
 
@@ -81,7 +124,6 @@ document.addEventListener('DOMContentLoaded', function () {
     books = b;
     buildBookPicker();
 
-    // default position: URL params > localStorage > Genesis 1
     var p = HKT.readChapterParams();
     var last = HKT.storeGet('hkt-last', null);
     if (p.b != null && p.c != null) { cur.b = p.b; cur.c = p.c; }
@@ -90,7 +132,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     clampCur();
     gotoBook(cur.b, cur.c, function () {
-      // deep link to a verse (from search results)
       var m = window.location.hash.match(/^#v(\d+)$/);
       if (m) highlightVerse(parseInt(m[1], 10));
     });
@@ -101,10 +142,10 @@ document.addEventListener('DOMContentLoaded', function () {
       '<p>Không tải được Kinh Thánh. Vui lòng kiểm tra kết nối mạng.</p>';
   }
 
-  // Load the book's text (cached) then render the chapter.
   function gotoBook(b, c, done) {
     cur.b = b; cur.c = c;
     clampCur();
+    stopAudio();
     bookSel.value = String(cur.b);
     HKT.loadBook(books[cur.b].id).then(function (d) {
       curData = d;
@@ -160,30 +201,32 @@ document.addEventListener('DOMContentLoaded', function () {
   function renderChapter() {
     clampCur();
     if (!curData) return;
-    var bk = books[cur.b], chIdx = cur.c - 1, verses = curData.ch[chIdx];
+    var bk = books[cur.b], verses = curData.ch[cur.c - 1];
     document.getElementById('chapter-head').textContent = bk.name + ' ' + cur.c;
+    var marks = HKT.getMarks();
     var html = '';
     verses.forEach(function (t, i) {
       var v = i + 1;
-      html += '<span class="verse" id="v' + v + '" data-v="' + v + '"><sup>' + v + '</sup>' +
-        esc(t) + '</span> ';
+      var key = HKT.verseKey(bk.id, cur.c, v);
+      var cls = 'verse' + (marks.hl[key] ? ' hl-' + marks.hl[key] : '');
+      var flag = marks.bm[key] ? '<span class="bm-flag" title="Đã đánh dấu">🔖</span>' : '';
+      html += '<span class="' + cls + '" id="v' + v + '" data-v="' + v + '">' +
+        flag + '<sup>' + v + '</sup>' + esc(t) + '</span> ';
     });
     var txt = document.getElementById('chapter-text');
     txt.innerHTML = html;
     txt.querySelectorAll('.verse').forEach(function (el) {
-      el.addEventListener('click', function () { onVerseTap(parseInt(el.dataset.v, 10)); });
+      el.addEventListener('click', function () { openSheet(parseInt(el.dataset.v, 10)); });
     });
 
-    // prev/next availability (crossing book boundaries)
     var nch = books[cur.b].nc.length;
     document.getElementById('prev-btn').disabled = !(cur.c > 1 || cur.b > 0);
     document.getElementById('next-btn').disabled =
       !(cur.c < nch || cur.b < books.length - 1);
 
-    // persist position
     HKT.storeSet('hkt-last', { b: cur.b, c: cur.c });
 
-    hideActionBar();
+    hideSheet();
     renderNotes();
     if (chapSel.value !== String(cur.c)) chapSel.value = String(cur.c);
   }
@@ -202,49 +245,189 @@ document.addEventListener('DOMContentLoaded', function () {
     try { window.history.replaceState(null, '', url); } catch (e) {}
   }
 
-  /* ---- verse action bar ---- */
-  function onVerseTap(v) {
+  /* ---- bottom sheet ---- */
+  var overlay = document.getElementById('sheet-overlay');
+  var sheet = document.getElementById('sheet');
+
+  function openSheet(v) {
     var txt = document.getElementById('chapter-text');
     txt.querySelectorAll('.verse').forEach(function (el) { el.classList.remove('active'); });
     var el = txt.querySelector('[data-v="' + v + '"]');
     if (el) el.classList.add('active');
-    selVerse = { b: cur.b, c: cur.c, v: v, text: curData.ch[cur.c - 1][v - 1] };
-    document.getElementById('ab-ref').textContent =
+    var bk = books[cur.b];
+    selVerse = {
+      b: cur.b, c: cur.c, v: v,
+      key: HKT.verseKey(bk.id, cur.c, v),
+      text: curData.ch[cur.c - 1][v - 1]
+    };
+    document.getElementById('sh-ref').textContent =
       HKT.fmtRef(books, selVerse.b, selVerse.c, selVerse.v);
-    document.getElementById('action-bar').classList.add('show');
+    document.getElementById('sh-text').textContent = selVerse.text;
+    ['sh-hl-panel', 'sh-note-panel', 'sh-xref-panel'].forEach(function (id) {
+      document.getElementById(id).hidden = true;
+    });
+    refreshMarkButtons();
+    xrefRefs = [];
+    document.getElementById('sh-xref-n').textContent = '';
+    document.getElementById('sh-xref-list').innerHTML = '<p class="muted">Đang tải…</p>';
+    HKT.loadXref(bk.id).then(function (x) {
+      xrefRefs = (x && x[cur.c + ':' + v]) || [];
+      document.getElementById('sh-xref-n').textContent =
+        xrefRefs.length ? '(' + xrefRefs.length + ')' : '';
+    });
+    overlay.classList.add('show');
+    sheet.classList.add('show');
   }
-  function hideActionBar() {
-    document.getElementById('action-bar').classList.remove('show');
+
+  function hideSheet() {
+    overlay.classList.remove('show');
+    sheet.classList.remove('show');
     var txt = document.getElementById('chapter-text');
     if (txt) txt.querySelectorAll('.verse').forEach(function (el) { el.classList.remove('active'); });
     selVerse = null;
   }
-  document.getElementById('ab-close').addEventListener('click', hideActionBar);
+  document.getElementById('sh-close').addEventListener('click', hideSheet);
+  overlay.addEventListener('click', hideSheet);
+
+  function refreshMarkButtons() {
+    if (!selVerse) return;
+    var marks = HKT.getMarks();
+    var bmBtn = document.getElementById('sh-bookmark');
+    bmBtn.querySelector('span').textContent = marks.bm[selVerse.key] ? 'Bỏ đánh dấu' : 'Đánh dấu';
+    bmBtn.classList.toggle('on', !!marks.bm[selVerse.key]);
+    var hlBtn = document.getElementById('sh-highlight');
+    hlBtn.classList.toggle('on', !!marks.hl[selVerse.key]);
+    document.querySelectorAll('.hl-colors button[data-hl]').forEach(function (b) {
+      b.classList.toggle('sel', marks.hl[selVerse.key] === b.dataset.hl && b.dataset.hl !== '');
+    });
+    document.getElementById('sh-note-text').value = marks.nt[selVerse.key] || '';
+    document.getElementById('sh-note').classList.toggle('on', !!marks.nt[selVerse.key]);
+  }
 
   function versePayload() {
     if (!selVerse) return null;
     var ref = HKT.fmtRef(books, selVerse.b, selVerse.c, selVerse.v);
     return { ref: ref, text: ref + '\n' + selVerse.text };
   }
-  document.getElementById('ab-copy').addEventListener('click', function () {
+
+  document.getElementById('sh-copy').addEventListener('click', function () {
     var p = versePayload();
-    if (!p) return;
-    copyText(p.text);
+    if (p) copyText(p.text);
   });
-  document.getElementById('ab-share').addEventListener('click', function () {
+  document.getElementById('sh-share').addEventListener('click', function () {
     var p = versePayload();
     if (!p) return;
     if (navigator.share) {
       navigator.share({ title: 'Kinh Thánh Mỗi Ngày — ' + p.ref, text: p.text })
-        .catch(function () { /* user cancelled */ });
+        .catch(function () {});
     } else {
       copyText(p.text);
     }
   });
+
+  document.getElementById('sh-bookmark').addEventListener('click', function () {
+    if (!selVerse) return;
+    var marks = HKT.getMarks();
+    if (marks.bm[selVerse.key]) delete marks.bm[selVerse.key];
+    else marks.bm[selVerse.key] = 1;
+    HKT.saveMarks(marks);
+    paintVerseMarks();
+    refreshMarkButtons();
+  });
+
+  document.getElementById('sh-highlight').addEventListener('click', function () {
+    var p = document.getElementById('sh-hl-panel');
+    p.hidden = !p.hidden;
+  });
+  document.querySelectorAll('.hl-colors button[data-hl]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (!selVerse) return;
+      var marks = HKT.getMarks();
+      if (b.dataset.hl) marks.hl[selVerse.key] = b.dataset.hl;
+      else delete marks.hl[selVerse.key];
+      HKT.saveMarks(marks);
+      paintVerseMarks();
+      refreshMarkButtons();
+    });
+  });
+
+  document.getElementById('sh-note').addEventListener('click', function () {
+    var p = document.getElementById('sh-note-panel');
+    p.hidden = !p.hidden;
+    if (!p.hidden) document.getElementById('sh-note-text').focus();
+  });
+  document.getElementById('sh-note-save').addEventListener('click', function () {
+    if (!selVerse) return;
+    var marks = HKT.getMarks();
+    var t = document.getElementById('sh-note-text').value.trim();
+    if (t) marks.nt[selVerse.key] = t;
+    else delete marks.nt[selVerse.key];
+    HKT.saveMarks(marks);
+    refreshMarkButtons();
+    flashSheet('Đã lưu ghi chú ✓');
+  });
+  document.getElementById('sh-note-del').addEventListener('click', function () {
+    if (!selVerse) return;
+    var marks = HKT.getMarks();
+    delete marks.nt[selVerse.key];
+    HKT.saveMarks(marks);
+    refreshMarkButtons();
+  });
+
+  document.getElementById('sh-xref').addEventListener('click', function () {
+    var p = document.getElementById('sh-xref-panel');
+    p.hidden = !p.hidden;
+    if (!p.hidden) renderXrefList();
+  });
+
+  function renderXrefList() {
+    var list = document.getElementById('sh-xref-list');
+    if (!xrefRefs.length) {
+      list.innerHTML = '<p class="muted">Chưa có tham chiếu cho câu này.</p>';
+      return;
+    }
+    list.innerHTML = '';
+    xrefRefs.forEach(function (ref) {
+      var b = document.createElement('button');
+      b.textContent = HKT.keyToRef(books, ref);
+      b.addEventListener('click', function () { jumpToKey(ref); });
+      list.appendChild(b);
+    });
+  }
+
+  function jumpToKey(key) {
+    var k = HKT.keyToIndices(books, key);
+    if (k.b < 0) return;
+    hideSheet();
+    if (k.b === cur.b) {
+      gotoBook(k.b, k.c, function () { highlightVerse(k.v); });
+    } else {
+      window.location.href = 'doc.html?b=' + k.b + '&c=' + k.c + '#v' + k.v;
+    }
+  }
+
+  /** Re-apply bookmark/highlight visuals without a full re-render. */
+  function paintVerseMarks() {
+    if (!selVerse || !curData) return;
+    var marks = HKT.getMarks();
+    var el = document.getElementById('chapter-text').querySelector('[data-v="' + selVerse.v + '"]');
+    if (!el) return;
+    HKT.HL_COLORS.forEach(function (c) { el.classList.remove('hl-' + c); });
+    if (marks.hl[selVerse.key]) el.classList.add('hl-' + marks.hl[selVerse.key]);
+    var flag = el.querySelector('.bm-flag');
+    if (marks.bm[selVerse.key] && !flag) {
+      var s = document.createElement('span');
+      s.className = 'bm-flag'; s.title = 'Đã đánh dấu'; s.textContent = '🔖';
+      el.insertBefore(s, el.firstChild);
+    } else if (!marks.bm[selVerse.key] && flag) {
+      flag.remove();
+    }
+  }
+
   function copyText(t) {
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(t).then(
-        function () { flashRef('Đã sao chép ✓'); },
+        function () { flashSheet('Đã sao chép ✓'); },
         function () { fallbackCopy(t); });
     } else {
       fallbackCopy(t);
@@ -256,29 +439,62 @@ document.addEventListener('DOMContentLoaded', function () {
     ta.style.position = 'fixed'; ta.style.opacity = '0';
     document.body.appendChild(ta);
     ta.select();
-    try { document.execCommand('copy'); flashRef('Đã sao chép ✓'); }
-    catch (e) { flashRef('Không sao chép được'); }
+    try { document.execCommand('copy'); flashSheet('Đã sao chép ✓'); }
+    catch (e) { flashSheet('Không sao chép được'); }
     document.body.removeChild(ta);
   }
-  function flashRef(msg) {
-    var r = document.getElementById('ab-ref');
-    var old = r.textContent;
+  function flashSheet(msg) {
+    var r = document.getElementById('sh-ref');
+    var old = r.dataset.orig || r.textContent;
+    r.dataset.orig = old;
     r.textContent = msg;
-    setTimeout(function () { r.textContent = old; }, 1200);
+    setTimeout(function () { r.textContent = r.dataset.orig || old; }, 1200);
   }
 
   function highlightVerse(v) {
     var el = document.getElementById('v' + v);
     if (el) {
       el.scrollIntoView({ block: 'center' });
-      onVerseTap(v);
+      openSheet(v);
     }
   }
+
+  /* ---- audio: read the chapter aloud ---- */
+  var audioBtn = document.getElementById('audio-btn');
+  var audioCtrl = null;
+  function stopAudio() {
+    if (audioCtrl) { audioCtrl.stop(); audioCtrl = null; }
+    audioBtn.innerHTML = '🔊 Nghe đoạn này';
+    var txt = document.getElementById('chapter-text');
+    if (txt) txt.querySelectorAll('.verse').forEach(function (el) { el.classList.remove('speaking'); });
+  }
+  audioBtn.addEventListener('click', function () {
+    if (!('speechSynthesis' in window)) {
+      audioBtn.innerHTML = '⚠️ Máy này không hỗ trợ đọc thành tiếng';
+      return;
+    }
+    if (audioCtrl) { stopAudio(); return; }
+    if (!curData) return;
+    var verses = curData.ch[cur.c - 1];
+    var parts = verses.map(function (t, i) { return 'Câu ' + (i + 1) + '. ' + t; });
+    var txt = document.getElementById('chapter-text');
+    audioBtn.innerHTML = '⏹️ Dừng đọc';
+    audioCtrl = HKT.speakSequence(parts, function (idx) {
+      txt.querySelectorAll('.verse').forEach(function (el) { el.classList.remove('speaking'); });
+      var el = txt.querySelector('[data-v="' + (idx + 1) + '"]');
+      if (el) {
+        el.classList.add('speaking');
+        el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      }
+    }, stopAudio);
+    if (!audioCtrl) stopAudio();
+  });
+  window.addEventListener('pagehide', stopAudio);
 
   /* ---- study notes panel ---- */
   function renderNotes() {
     var body = document.getElementById('notes-body');
-    if (!books || !notes) return; // still loading
+    if (!books || !notes) return;
     var bk = books[cur.b];
     var key = bk.id + ':' + cur.c;
     var note = notes[key] || notes[key.toUpperCase()];
