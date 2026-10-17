@@ -161,7 +161,7 @@
   /* ---------- audio: read aloud via the device's own speech engine ----------
      Free, on-device, no downloads. Parts are spoken one by one so the UI
      can highlight each part as it is read. */
-  function speakSequence(parts, onPart, onDone) {
+  function speakSequence(parts, onPart, onDone, onError) {
     var synth = window.speechSynthesis;
     if (!synth || !parts || !parts.length) return null;
     try { synth.getVoices(); } catch (e) {} // prime voice list
@@ -188,8 +188,14 @@
       u.lang = 'vi-VN';
       u.rate = 0.95;
       if (vv) u.voice = vv;
-      u.onend = function () { ctrl.i++; next(); };
-      u.onerror = function () { ctrl.stopped = true; if (onDone) onDone(); };
+      u.onend = function () { if (ctrl.stopped) return; ctrl.i++; next(); };
+      // NB: synth.cancel() fires 'error' (interrupted/canceled) in Chrome —
+      // a user-initiated stop must NOT be treated as "finished" (no onDone).
+      u.onerror = function () {
+        if (ctrl.stopped) return;
+        ctrl.stopped = true;
+        if (onError) { try { onError(); } catch (e) {} }
+      };
       if (onPart) { try { onPart(idx); } catch (e) {} }
       synth.speak(u);
     }

@@ -495,7 +495,7 @@ document.addEventListener('DOMContentLoaded', function () {
         el.classList.add('speaking');
         el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
       }
-    }, audioFinished);
+    }, audioFinished, stopAudio); // onError: just stop the UI, never auto-advance
     if (!audioCtrl) stopAudio();
   }
   function audioFinished() {

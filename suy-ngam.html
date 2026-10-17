@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (devAudioCtrl) { stopDevAudio(); return; }
     if (!devParts.length) return;
     devAudioBtn.innerHTML = '⏹️ Dừng';
-    devAudioCtrl = HKT.speakSequence(devParts, null, stopDevAudio);
+    devAudioCtrl = HKT.speakSequence(devParts, null, stopDevAudio, stopDevAudio);
     if (!devAudioCtrl) stopDevAudio();
   });
   window.addEventListener('pagehide', stopDevAudio);
