@@ -2,7 +2,7 @@
 // Precache the app shell only. Bible text loads per-book (data/bible/<id>.json)
 // and other data JSON are cached on first fetch (cache-first), so install
 // never risks failing on a big file.
-var CACHE = 'hkt-v4';
+var CACHE = 'hkt-v5';
 var SHELL = [
   './',
   'index.html',
@@ -12,6 +12,7 @@ var SHELL = [
   'suy-ngam.html',
   'chu-de.html',
   'danh-dau.html',
+  'tu-ngu.html',
   'style.css',
   'app.js',
   'favicon.svg',

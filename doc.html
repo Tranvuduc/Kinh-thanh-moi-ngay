@@ -477,6 +477,9 @@ document.addEventListener('DOMContentLoaded', function () {
       return;
     }
     if (audioCtrl) { stopAudio(); return; }
+    startAudio();
+  });
+  function startAudio() {
     if (!curData) return;
     var verses = curData.ch[cur.c - 1];
     var parts = verses.slice(); // read flowing text, no "câu N" prefixes
@@ -489,9 +492,18 @@ document.addEventListener('DOMContentLoaded', function () {
         el.classList.add('speaking');
         el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
       }
-    }, stopAudio);
+    }, audioFinished);
     if (!audioCtrl) stopAudio();
-  });
+  }
+  function audioFinished() {
+    // seamless reading: automatically continue with the next chapter
+    var nch = books[cur.b].nc.length;
+    var nb = cur.b, nc = cur.c;
+    if (cur.c < nch) { nc = cur.c + 1; }
+    else if (cur.b < books.length - 1) { nb = cur.b + 1; nc = 1; }
+    else { stopAudio(); return; } // end of Revelation: stop
+    gotoBook(nb, nc, function () { startAudio(); });
+  }
   window.addEventListener('pagehide', stopAudio);
 
   /* ---- reading progress bar ---- */

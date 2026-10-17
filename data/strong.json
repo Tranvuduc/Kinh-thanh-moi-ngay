@@ -1,0 +1,996 @@
+[
+ {
+  "strong": "G26",
+  "lang": "greek",
+  "word": "ἀγάπη",
+  "translit": "a-ga-pê",
+  "vn": "tình yêu thương",
+  "pos": "danh từ",
+  "def": "Tình yêu tự nguyện, hy sinh, đặt lợi ích người khác lên trên — bản tính của Đức Chúa Trời và dấu hiệu của người thuộc về Ngài.",
+  "verses": [
+   "1cor:13:4",
+   "1joh:4:8",
+   "rom:5:5"
+  ]
+ },
+ {
+  "strong": "G3056",
+  "lang": "greek",
+  "word": "λόγος",
+  "translit": "lô-gốt",
+  "vn": "Lời / Đạo",
+  "pos": "danh từ",
+  "def": "Lời của Đức Chúa Trời — vừa là lời Ngài phán, vừa là Ngôi Lời hằng hữu, Chúa Giê-xu Christ, Đấng bày tỏ Cha trọn vẹn.",
+  "verses": [
+   "joh:1:1",
+   "joh:1:14",
+   "heb:4:12"
+  ]
+ },
+ {
+  "strong": "G5485",
+  "lang": "greek",
+  "word": "χάρις",
+  "translit": "kha-rít",
+  "vn": "ân điển",
+  "pos": "danh từ",
+  "def": "Ơn nhưng không của Đức Chúa Trời ban cho kẻ không xứng đáng — nền tảng duy nhất của sự cứu rỗi, đối lập với công đức.",
+  "verses": [
+   "eph:2:8",
+   "joh:1:16",
+   "2cor:12:9"
+  ]
+ },
+ {
+  "strong": "G4102",
+  "lang": "greek",
+  "word": "πίστις",
+  "translit": "pít-tít",
+  "vn": "đức tin",
+  "pos": "danh từ",
+  "def": "Sự tin cậy, nương dựa hoàn toàn nơi Đấng Christ và lời hứa của Ngài — phương tiện duy nhất tiếp nhận sự xưng công chính.",
+  "verses": [
+   "eph:2:8",
+   "heb:11:1",
+   "rom:1:17"
+  ]
+ },
+ {
+  "strong": "G1343",
+  "lang": "greek",
+  "word": "δικαιοσύνη",
+  "translit": "đi-kai-ô-xu-nê",
+  "vn": "sự công chính",
+  "pos": "danh từ",
+  "def": "Sự ngay thẳng trọn vẹn theo chuẩn mực của Đức Chúa Trời — Đấng Christ đã hoàn thành thay chúng ta và ban cho kẻ tin.",
+  "verses": [
+   "rom:1:17",
+   "mat:5:6",
+   "2cor:5:21"
+  ]
+ },
+ {
+  "strong": "G4991",
+  "lang": "greek",
+  "word": "σωτηρία",
+  "translit": "sô-tê-ri-a",
+  "vn": "sự cứu rỗi",
+  "pos": "danh từ",
+  "def": "Sự giải cứu trọn vẹn của Đức Chúa Trời khỏi tội lỗi và hình phạt — bởi ân điển, qua đức tin, trong Đấng Christ mà thôi.",
+  "verses": [
+   "rom:1:16",
+   "eph:1:13",
+   "act:4:12"
+  ]
+ },
+ {
+  "strong": "G40",
+  "lang": "greek",
+  "word": "ἅγιος",
+  "translit": "ha-ghi-ốt",
+  "vn": "thánh",
+  "pos": "tính từ",
+  "def": "Được biệt riêng cho Đức Chúa Trời, tách khỏi điều ô uế — bản tính Ngài và cũng là sự kêu gọi của mọi tín hữu.",
+  "verses": [
+   "1pet:1:16",
+   "rev:4:8",
+   "mat:1:18"
+  ]
+ },
+ {
+  "strong": "G4151",
+  "lang": "greek",
+  "word": "πνεῦμα",
+  "translit": "pneu-ma",
+  "vn": "Thần / linh",
+  "pos": "danh từ",
+  "def": "Gió, hơi thở, và Đức Thánh Linh — Đấng tái sinh, ngự trong tín hữu, dẫn dắt và ban quyền năng cho Hội Thánh.",
+  "verses": [
+   "joh:3:8",
+   "act:1:8",
+   "rom:8:16"
+  ]
+ },
+ {
+  "strong": "G2962",
+  "lang": "greek",
+  "word": "κύριος",
+  "translit": "ku-ri-ốt",
+  "vn": "Chúa",
+  "pos": "danh từ",
+  "def": "Chủ, Đấng có toàn quyền — danh hiệu của Đức Chúa Trời và của Chúa Giê-xu Christ, Đấng đáng được vâng phục tuyệt đối.",
+  "verses": [
+   "rom:10:9",
+   "phil:2:11",
+   "luk:2:11"
+  ]
+ },
+ {
+  "strong": "G5547",
+  "lang": "greek",
+  "word": "Χριστός",
+  "translit": "khrit-tốt",
+  "vn": "Đấng Christ",
+  "pos": "danh từ",
+  "def": "Đấng Được Xức Dầu — Đấng Mê-si-a mà Cựu Ước đã hứa, Vua và Cứu Chúa duy nhất của dân Ngài.",
+  "verses": [
+   "mat:16:16",
+   "joh:1:41",
+   "rom:5:8"
+  ]
+ },
+ {
+  "strong": "G2316",
+  "lang": "greek",
+  "word": "θεός",
+  "translit": "thê-ốt",
+  "vn": "Đức Chúa Trời",
+  "pos": "danh từ",
+  "def": "Đấng Tự Hữu Hằng Hữu, Đấng Sáng Tạo và Cai Trị muôn vật — Cha, Con và Đức Thánh Linh, một Đức Chúa Trời chân thật.",
+  "verses": [
+   "joh:1:1",
+   "joh:3:16",
+   "rom:8:31"
+  ]
+ },
+ {
+  "strong": "G444",
+  "lang": "greek",
+  "word": "ἄνθρωπος",
+  "translit": "an-thrô-pốt",
+  "vn": "con người",
+  "pos": "danh từ",
+  "def": "Loài người được dựng nên theo hình ảnh Đức Chúa Trời, nhưng đã sa ngã trong A-đam và cần được cứu chuộc.",
+  "verses": [
+   "mat:4:4",
+   "rom:5:12",
+   "1tim:2:5"
+  ]
+ },
+ {
+  "strong": "G266",
+  "lang": "greek",
+  "word": "ἁμαρτία",
+  "translit": "ha-mác-ti-a",
+  "vn": "tội lỗi",
+  "pos": "danh từ",
+  "def": "Sự trật mục tiêu — mọi tư tưởng, lời nói, việc làm nghịch lại luật thánh của Đức Chúa Trời, đáng chịu hình phạt đời đời.",
+  "verses": [
+   "joh:1:29",
+   "rom:6:23",
+   "1joh:1:8"
+  ]
+ },
+ {
+  "strong": "G3340",
+  "lang": "greek",
+  "word": "μετανοέω",
+  "translit": "mê-ta-nô-ê-ô",
+  "vn": "ăn năn",
+  "pos": "động từ",
+  "def": "Thay đổi tâm trí, quay khỏi tội lỗi mà trở về cùng Đức Chúa Trời — bông trái thật của đức tin cứu rỗi.",
+  "verses": [
+   "mat:3:2",
+   "act:2:38",
+   "luk:13:3"
+  ]
+ },
+ {
+  "strong": "G907",
+  "lang": "greek",
+  "word": "βαπτίζω",
+  "translit": "báp-ti-dô",
+  "vn": "báp-têm / dìm xuống",
+  "pos": "động từ",
+  "def": "Dìm xuống nước — dấu hiệu của giao ước, bày tỏ sự chết, chôn và sống lại với Đấng Christ của người tin.",
+  "verses": [
+   "mat:3:11",
+   "act:2:38",
+   "mar:16:16"
+  ]
+ },
+ {
+  "strong": "G1577",
+  "lang": "greek",
+  "word": "ἐκκλησία",
+  "translit": "éc-clê-si-a",
+  "vn": "Hội Thánh",
+  "pos": "danh từ",
+  "def": "Những người được gọi ra khỏi thế gian — dân được chuộc của Đấng Christ, thân thể Ngài trên đất.",
+  "verses": [
+   "mat:16:18",
+   "act:2:47",
+   "eph:5:25"
+  ]
+ },
+ {
+  "strong": "G2098",
+  "lang": "greek",
+  "word": "εὐαγγέλιον",
+  "translit": "êu-an-ghê-li-on",
+  "vn": "Phúc Âm",
+  "pos": "danh từ",
+  "def": "Tin mừng: Đấng Christ đã chết vì tội lỗi chúng ta, đã sống lại, và ai tin Ngài thì được cứu — quyền năng của Đức Chúa Trời.",
+  "verses": [
+   "mar:1:1",
+   "rom:1:16",
+   "1cor:15:1"
+  ]
+ },
+ {
+  "strong": "G165",
+  "lang": "greek",
+  "word": "αἰών",
+  "translit": "ai-ôn",
+  "vn": "đời đời / thời đại",
+  "pos": "danh từ",
+  "def": "Một thời đại, và sự sống đời đời — sự sống không bao giờ cùng mà Đức Chúa Trời ban cho kẻ tin trong Đấng Christ.",
+  "verses": [
+   "joh:3:16",
+   "mat:28:20",
+   "eph:1:21"
+  ]
+ },
+ {
+  "strong": "G2819",
+  "lang": "greek",
+  "word": "κλῆρος",
+  "translit": "klê-rốt",
+  "vn": "phần / cơ nghiệp",
+  "pos": "danh từ",
+  "def": "Phần được chia bằng cách bắt thăm, rồi chỉ cơ nghiệp — phần gia tài trên trời dành cho các thánh đồ.",
+  "verses": [
+   "act:1:26",
+   "1pet:5:3",
+   "col:1:12"
+  ]
+ },
+ {
+  "strong": "G5207",
+  "lang": "greek",
+  "word": "υἱός",
+  "translit": "huy-ốt",
+  "vn": "con trai",
+  "pos": "danh từ",
+  "def": "Con — danh hiệu của Chúa Giê-xu là Con Một của Đức Chúa Trời, và của tín hữu được làm con nuôi bởi ân điển.",
+  "verses": [
+   "mat:3:17",
+   "joh:3:16",
+   "gal:4:6"
+  ]
+ },
+ {
+  "strong": "G3962",
+  "lang": "greek",
+  "word": "πατήρ",
+  "translit": "pa-têr",
+  "vn": "Cha",
+  "pos": "danh từ",
+  "def": "Cha trên trời — Đấng yêu thương, chăm sóc và kỷ luật con cái Ngài; Chúa Giê-xu dạy chúng ta cầu nguyện với Ngài.",
+  "verses": [
+   "mat:6:9",
+   "rom:8:15",
+   "eph:4:6"
+  ]
+ },
+ {
+  "strong": "G1325",
+  "lang": "greek",
+  "word": "δίδωμι",
+  "translit": "đi-đô-mi",
+  "vn": "ban cho",
+  "pos": "động từ",
+  "def": "Ban tặng — Đức Chúa Trời là Đấng ban mọi ơn lành, cao trọng nhất là ban Con Một Ngài vì tội nhân.",
+  "verses": [
+   "joh:3:16",
+   "mat:7:11",
+   "act:20:35"
+  ]
+ },
+ {
+  "strong": "G25",
+  "lang": "greek",
+  "word": "ἀγαπάω",
+  "translit": "a-ga-pa-ô",
+  "vn": "yêu thương",
+  "pos": "động từ",
+  "def": "Yêu bằng hành động hy sinh, không điều kiện — tình yêu Đức Chúa Trời dành cho thế gian và mạng lệnh cho môn đồ Ngài.",
+  "verses": [
+   "joh:3:16",
+   "mat:22:37",
+   "1joh:4:19"
+  ]
+ },
+ {
+  "strong": "G4352",
+  "lang": "greek",
+  "word": "προσκυνέω",
+  "translit": "prốt-ku-nê-ô",
+  "vn": "thờ phượng",
+  "pos": "động từ",
+  "def": "Phủ phục, tôn thờ — sự thờ phượng chân thật chỉ dành cho Đức Chúa Trời, trong thần linh và lẽ thật.",
+  "verses": [
+   "mat:4:10",
+   "joh:4:24",
+   "rev:4:10"
+  ]
+ },
+ {
+  "strong": "G4336",
+  "lang": "greek",
+  "word": "προσεύχομαι",
+  "translit": "prô-seu-khô-mai",
+  "vn": "cầu nguyện",
+  "pos": "động từ",
+  "def": "Thưa chuyện với Đức Chúa Trời — đặc ân của con cái Ngài, nhân danh Chúa Giê-xu Christ mà đến cùng Cha.",
+  "verses": [
+   "mat:6:9",
+   "luk:11:1",
+   "1thes:5:17"
+  ]
+ },
+ {
+  "strong": "G3144",
+  "lang": "greek",
+  "word": "μάρτυς",
+  "translit": "mác-tuyt",
+  "vn": "chứng nhân",
+  "pos": "danh từ",
+  "def": "Người làm chứng — kẻ rao truyền Đấng Christ bằng lời nói và đời sống, dầu phải trả giá bằng chính mạng sống mình.",
+  "verses": [
+   "act:1:8",
+   "rev:2:13",
+   "heb:12:1"
+  ]
+ },
+ {
+  "strong": "G1248",
+  "lang": "greek",
+  "word": "διακονία",
+  "translit": "đi-a-kô-ni-a",
+  "vn": "chức vụ / sự phục vụ",
+  "pos": "danh từ",
+  "def": "Sự hầu việc khiêm nhường — mọi tín hữu đều được gọi phục vụ Chúa và Hội Thánh theo ân tứ mình đã nhận.",
+  "verses": [
+   "act:6:4",
+   "2cor:5:18",
+   "eph:4:12"
+  ]
+ },
+ {
+  "strong": "G5486",
+  "lang": "greek",
+  "word": "χάρισμα",
+  "translit": "kha-rít-ma",
+  "vn": "ân tứ",
+  "pos": "danh từ",
+  "def": "Ơn ban nhưng không của Đức Thánh Linh cho từng tín hữu — để gây dựng Hội Thánh, không phải để khoe mình.",
+  "verses": [
+   "rom:12:6",
+   "1cor:12:4",
+   "1pet:4:10"
+  ]
+ },
+ {
+  "strong": "G1411",
+  "lang": "greek",
+  "word": "δύναμις",
+  "translit": "đu-na-mít",
+  "vn": "quyền năng",
+  "pos": "danh từ",
+  "def": "Năng lực siêu nhiên của Đức Chúa Trời — thể hiện trong sự sống lại của Đấng Christ và trong đời sống tín hữu.",
+  "verses": [
+   "act:1:8",
+   "rom:1:16",
+   "2tim:1:7"
+  ]
+ },
+ {
+  "strong": "G1515",
+  "lang": "greek",
+  "word": "εἰρήνη",
+  "translit": "ây-rê-nê",
+  "vn": "bình an",
+  "pos": "danh từ",
+  "def": "Sự hòa thuận với Đức Chúa Trời qua sự chuộc tội của Đấng Christ — và sự bình an Ngài giữ lòng kẻ tin.",
+  "verses": [
+   "joh:14:27",
+   "rom:5:1",
+   "phil:4:7"
+  ]
+ },
+ {
+  "strong": "G1680",
+  "lang": "greek",
+  "word": "ἐλπίς",
+  "translit": "ên-pít",
+  "vn": "hy vọng",
+  "pos": "danh từ",
+  "def": "Sự trông đợi chắc chắn vào lời hứa của Đức Chúa Trời — neo vững chắc cho linh hồn giữa bão tố cuộc đời.",
+  "verses": [
+   "rom:5:5",
+   "heb:11:1",
+   "1pet:1:3"
+  ]
+ },
+ {
+  "strong": "G5479",
+  "lang": "greek",
+  "word": "χαρά",
+  "translit": "kha-ra",
+  "vn": "vui mừng",
+  "pos": "danh từ",
+  "def": "Niềm vui sâu xa không tùy hoàn cảnh — bông trái của Đức Thánh Linh, bén rễ sâu trong mối tương giao với Đấng Christ.",
+  "verses": [
+   "joh:15:11",
+   "gal:5:22",
+   "1thes:1:6"
+  ]
+ },
+ {
+  "strong": "G5278",
+  "lang": "greek",
+  "word": "ὑπομένω",
+  "translit": "huy-pô-mê-nô",
+  "vn": "bền đỗ / chịu đựng",
+  "pos": "động từ",
+  "def": "Ở lại dưới thử thách mà không bỏ cuộc — dấu hiệu của đức tin thật, và kẻ bền đỗ đến cuối sẽ được cứu.",
+  "verses": [
+   "mat:24:13",
+   "rom:12:12",
+   "jac:1:12"
+  ]
+ },
+ {
+  "strong": "G4993",
+  "lang": "greek",
+  "word": "σωφρονέω",
+  "translit": "sô-phrô-nê-ô",
+  "vn": "tiết độ / khôn ngoan",
+  "pos": "động từ",
+  "def": "Suy nghĩ đúng mực, tự chủ, sáng suốt — tâm trí được Phúc Âm đổi mới, không kiêu ngạo cũng không khinh mình.",
+  "verses": [
+   "mar:5:15",
+   "rom:12:3",
+   "tit:2:6"
+  ]
+ },
+ {
+  "strong": "G5056",
+  "lang": "greek",
+  "word": "τέλος",
+  "translit": "tê-lốt",
+  "vn": "cuối cùng / mục đích",
+  "pos": "danh từ",
+  "def": "Điểm kết thúc và cũng là mục tiêu — Đấng Christ là sự hoàn thành của luật pháp, và mọi sự quy về vinh hiển Ngài.",
+  "verses": [
+   "mat:24:13",
+   "rom:10:4",
+   "jac:5:11"
+  ]
+ },
+ {
+  "strong": "G1342",
+  "lang": "greek",
+  "word": "δίκαιος",
+  "translit": "đi-kai-ốt",
+  "vn": "công chính",
+  "pos": "tính từ",
+  "def": "Ngay thẳng trước mặt Đức Chúa Trời — người được xưng công chính bởi đức tin nơi Đấng Christ sẽ sống bởi đức tin.",
+  "verses": [
+   "rom:1:17",
+   "1pet:3:18",
+   "mat:13:43"
+  ]
+ },
+ {
+  "strong": "H2617",
+  "lang": "hebrew",
+  "word": "חֶסֶד",
+  "translit": "khê-xết",
+  "vn": "tình yêu thành tín",
+  "pos": "danh từ",
+  "def": "Tình yêu trung tín của giao ước — lòng nhân từ bền vững của Đức Chúa Trời với dân Ngài, không bao giờ dời đổi.",
+  "verses": [
+   "psa:136:1",
+   "exo:34:6",
+   "mich:6:8"
+  ]
+ },
+ {
+  "strong": "H7965",
+  "lang": "hebrew",
+  "word": "שָׁלוֹם",
+  "translit": "sa-lôm",
+  "vn": "bình an",
+  "pos": "danh từ",
+  "def": "Sự trọn vẹn, đầy đủ mọi phước hạnh — bình an Đức Chúa Trời ban, cao trọng nhất là hòa thuận với Ngài qua Đấng Christ.",
+  "verses": [
+   "num:6:26",
+   "psa:29:11",
+   "isa:9:6"
+  ]
+ },
+ {
+  "strong": "H1285",
+  "lang": "hebrew",
+  "word": "בְּרִית",
+  "translit": "bê-rít",
+  "vn": "giao ước",
+  "pos": "danh từ",
+  "def": "Lời cam kết long trọng của Đức Chúa Trời — Ngài lập giao ước với dân Ngài và giữ trọn bởi ân điển, từ Nô-ê đến Đấng Christ.",
+  "verses": [
+   "gen:9:13",
+   "gen:17:7",
+   "jer:31:31"
+  ]
+ },
+ {
+  "strong": "H430",
+  "lang": "hebrew",
+  "word": "אֱלֹהִים",
+  "translit": "ê-lô-him",
+  "vn": "Đức Chúa Trời",
+  "pos": "danh từ",
+  "def": "Danh xưng chung của Đức Chúa Trời chân thật — Đấng toàn năng, Đấng Sáng Tạo trời đất trong quyền năng Ngài.",
+  "verses": [
+   "gen:1:1",
+   "exo:20:2",
+   "isa:45:18"
+  ]
+ },
+ {
+  "strong": "H3068",
+  "lang": "hebrew",
+  "word": "יְהוָה",
+  "translit": "gia-hô-va",
+  "vn": "ĐỨC GIÊ-HÔ-VA",
+  "pos": "danh từ",
+  "def": "Danh riêng của Đức Chúa Trời giao ước — Đấng Tự Hữu Hằng Hữu, thành tín giữ lời hứa với dân Ngài đời đời.",
+  "verses": [
+   "gen:2:4",
+   "deb:6:4",
+   "psa:23:1"
+  ]
+ },
+ {
+  "strong": "H1254",
+  "lang": "hebrew",
+  "word": "בָּרָא",
+  "translit": "ba-ra",
+  "vn": "dựng nên",
+  "pos": "động từ",
+  "def": "Sáng tạo từ hư không bởi lời phán quyền năng — công việc chỉ Đức Chúa Trời làm được, bày tỏ vinh hiển Ngài.",
+  "verses": [
+   "gen:1:1",
+   "gen:1:27",
+   "isa:43:1"
+  ]
+ },
+ {
+  "strong": "H5315",
+  "lang": "hebrew",
+  "word": "נֶפֶשׁ",
+  "translit": "nê-phết",
+  "vn": "linh hồn / sinh mạng",
+  "pos": "danh từ",
+  "def": "Hơi sống, con người toàn diện — mỗi linh hồn đều quý giá trước mặt Đức Chúa Trời và cần được cứu chuộc.",
+  "verses": [
+   "gen:2:7",
+   "deb:6:5",
+   "1roi:17:21"
+  ]
+ },
+ {
+  "strong": "H3820",
+  "lang": "hebrew",
+  "word": "לֵב",
+  "translit": "lêv",
+  "vn": "lòng",
+  "pos": "danh từ",
+  "def": "Trung tâm của con người — nơi suy nghĩ, quyết định và yêu thương; Đức Chúa Trời đòi hỏi cả tấm lòng, không chỉ hình thức.",
+  "verses": [
+   "deb:6:5",
+   "prov:3:5",
+   "jer:17:9"
+  ]
+ },
+ {
+  "strong": "H6666",
+  "lang": "hebrew",
+  "word": "צְדָקָה",
+  "translit": "tsê-đa-ka",
+  "vn": "sự công chính",
+  "pos": "danh từ",
+  "def": "Sự ngay thẳng theo chuẩn mực Đức Chúa Trời — Ngài kể là công chính cho kẻ tin, như đã kể cho Áp-ra-ham.",
+  "verses": [
+   "gen:15:6",
+   "deb:6:25",
+   "prov:21:3"
+  ]
+ },
+ {
+  "strong": "H7356",
+  "lang": "hebrew",
+  "word": "רַחֲמִים",
+  "translit": "ra-kha-mim",
+  "vn": "lòng thương xót",
+  "pos": "danh từ",
+  "def": "Tình thương dịu dàng như mẹ thương con — Đức Chúa Trời đầy lòng thương xót với kẻ ăn năn kêu cầu Ngài.",
+  "verses": [
+   "isa:49:15",
+   "zach:7:9",
+   "dan:9:9"
+  ]
+ },
+ {
+  "strong": "H3722",
+  "lang": "hebrew",
+  "word": "כָּפַר",
+  "translit": "ka-phar",
+  "vn": "chuộc tội / đền tội",
+  "pos": "động từ",
+  "def": "Che phủ tội lỗi bằng của lễ — hình bóng về sự chuộc tội trọn vẹn của Đấng Christ trên thập tự giá.",
+  "verses": [
+   "lev:17:11",
+   "deb:21:8",
+   "2chron:30:18"
+  ]
+ },
+ {
+  "strong": "H2398",
+  "lang": "hebrew",
+  "word": "חָטָא",
+  "translit": "kha-ta",
+  "vn": "phạm tội",
+  "pos": "động từ",
+  "def": "Trật mục tiêu, phạm tội nghịch cùng Đức Chúa Trời — mọi người đều đã phạm tội và cần ân điển tha thứ của Ngài.",
+  "verses": [
+   "gen:20:6",
+   "2sam:12:13",
+   "1roi:8:47"
+  ]
+ },
+ {
+  "strong": "H5162",
+  "lang": "hebrew",
+  "word": "נָחַם",
+  "translit": "na-kham",
+  "vn": "ăn năn / an ủi",
+  "pos": "động từ",
+  "def": "Hối tiếc và quay lại — Đức Chúa Trời kêu gọi tội nhân ăn năn, và Ngài an ủi kẻ có lòng đau đớn vì tội.",
+  "verses": [
+   "gen:6:6",
+   "jon:3:10",
+   "joel:2:14"
+  ]
+ },
+ {
+  "strong": "H8085",
+  "lang": "hebrew",
+  "word": "שָׁמַע",
+  "translit": "sa-ma",
+  "vn": "nghe / vâng lời",
+  "pos": "động từ",
+  "def": "Nghe để vâng theo — đức tin thật luôn đi đôi với vâng lời; “nghe” trong Kinh Thánh bao hàm cả hành động.",
+  "verses": [
+   "deb:6:4",
+   "1sam:15:22",
+   "exo:15:26"
+  ]
+ },
+ {
+  "strong": "H1984",
+  "lang": "hebrew",
+  "word": "הָלַל",
+  "translit": "ha-lan",
+  "vn": "ngợi khen",
+  "pos": "động từ",
+  "def": "Ca ngợi rực rỡ, vang lừng — cả tạo vật được dựng nên để ngợi khen Đức Chúa Trời đời đời.",
+  "verses": [
+   "psa:150:1",
+   "psa:150:6",
+   "2sam:22:4"
+  ]
+ },
+ {
+  "strong": "H3034",
+  "lang": "hebrew",
+  "word": "יָדָה",
+  "translit": "ya-đa",
+  "vn": "cảm tạ / xưng nhận",
+  "pos": "động từ",
+  "def": "Giơ tay cảm tạ và xưng nhận — vừa là lời tạ ơn phước hạnh, vừa là xưng tội mình trước mặt Đức Chúa Trời.",
+  "verses": [
+   "gen:29:35",
+   "psa:136:1",
+   "isa:12:1"
+  ]
+ },
+ {
+  "strong": "H1288",
+  "lang": "hebrew",
+  "word": "בָּרַךְ",
+  "translit": "ba-rakh",
+  "vn": "chúc phước",
+  "pos": "động từ",
+  "def": "Ban phước lành — Đức Chúa Trời chúc phước cho dân Ngài, và Ngài kêu gọi Áp-ra-ham trở nên nguồn phước cho muôn dân.",
+  "verses": [
+   "gen:1:28",
+   "gen:12:3",
+   "num:6:24"
+  ]
+ },
+ {
+  "strong": "H2428",
+  "lang": "hebrew",
+  "word": "חַיִל",
+  "translit": "kha-yin",
+  "vn": "mạnh mẽ / đảm đang",
+  "pos": "danh từ",
+  "def": "Sức mạnh, năng lực, phẩm hạnh — người nữ tài đức và người nam dũng cảm đều dùng sức mình phục vụ Đức Chúa Trời.",
+  "verses": [
+   "exo:18:21",
+   "rut:3:11",
+   "prov:31:10"
+  ]
+ },
+ {
+  "strong": "H3467",
+  "lang": "hebrew",
+  "word": "יָשַׁע",
+  "translit": "ya-sa",
+  "vn": "cứu / giải cứu",
+  "pos": "động từ",
+  "def": "Giải cứu khỏi nguy hiểm — Đức Chúa Trời là Đấng Cứu Rỗi, và danh Chúa Giê-xu có nghĩa là “Đức Giê-hô-va cứu”.",
+  "verses": [
+   "exo:14:30",
+   "isa:45:22",
+   "sep:3:17"
+  ]
+ },
+ {
+  "strong": "H7121",
+  "lang": "hebrew",
+  "word": "קָרָא",
+  "translit": "ka-ra",
+  "vn": "kêu cầu / gọi",
+  "pos": "động từ",
+  "def": "Gọi lớn tiếng, kêu cầu — ai kêu cầu danh Đức Giê-hô-va thì được cứu; Ngài cũng gọi đích danh chiên Ngài.",
+  "verses": [
+   "gen:4:26",
+   "exo:3:4",
+   "isa:6:3"
+  ]
+ },
+ {
+  "strong": "H571",
+  "lang": "hebrew",
+  "word": "אֱמֶת",
+  "translit": "ê-mết",
+  "vn": "lẽ thật / thành tín",
+  "pos": "danh từ",
+  "def": "Sự chân thật vững bền — bản tính của Đức Chúa Trời và của lời Ngài; dân Ngài phải bước đi trong lẽ thật.",
+  "verses": [
+   "exo:34:6",
+   "gen:24:27",
+   "zach:8:16"
+  ]
+ },
+ {
+  "strong": "H6942",
+  "lang": "hebrew",
+  "word": "קָדַשׁ",
+  "translit": "ka-đash",
+  "vn": "nên thánh / biệt riêng",
+  "pos": "động từ",
+  "def": "Biệt riêng cho Đức Chúa Trời — Ngài thánh khiết nên dân Ngài cũng phải nên thánh trong mọi cách ăn ở.",
+  "verses": [
+   "gen:2:3",
+   "exo:19:10",
+   "isa:8:13"
+  ]
+ },
+ {
+  "strong": "H7307",
+  "lang": "hebrew",
+  "word": "רוּחַ",
+  "translit": "ru-akh",
+  "vn": "gió / Thần",
+  "pos": "danh từ",
+  "def": "Gió, hơi thở, và Thần của Đức Chúa Trời — Đấng ban sự sống, cảm động các tiên tri và đổ đầy Hội Thánh.",
+  "verses": [
+   "gen:1:2",
+   "joel:2:28",
+   "ezek:37:9"
+  ]
+ },
+ {
+  "strong": "H8064",
+  "lang": "hebrew",
+  "word": "שָׁמַיִם",
+  "translit": "sa-ma-yim",
+  "vn": "các tầng trời",
+  "pos": "danh từ",
+  "def": "Bầu trời và nơi ngự của Đức Chúa Trời — công việc tay Ngài làm ra, rao truyền vinh hiển Ngài ngày đêm.",
+  "verses": [
+   "gen:1:1",
+   "1roi:8:27",
+   "isa:66:1"
+  ]
+ },
+ {
+  "strong": "H776",
+  "lang": "hebrew",
+  "word": "אֶרֶץ",
+  "translit": "ê-rết",
+  "vn": "đất",
+  "pos": "danh từ",
+  "def": "Đất mà Đức Chúa Trời dựng nên và ban cho loài người quản trị — và đất hứa Ngài ban cho dân giao ước của Ngài.",
+  "verses": [
+   "gen:1:1",
+   "gen:12:1",
+   "exo:3:8"
+  ]
+ },
+ {
+  "strong": "H3117",
+  "lang": "hebrew",
+  "word": "יוֹם",
+  "translit": "yôm",
+  "vn": "ngày",
+  "pos": "danh từ",
+  "def": "Khoảng thời gian sáng tạo và cũng là “ngày của Đức Giê-hô-va” — ngày Ngài thi hành sự công chính cuối cùng.",
+  "verses": [
+   "gen:1:5",
+   "gen:2:2",
+   "exo:20:8"
+  ]
+ },
+ {
+  "strong": "H3915",
+  "lang": "hebrew",
+  "word": "לַיִל",
+  "translit": "la-yin",
+  "vn": "đêm / ban đêm",
+  "pos": "danh từ",
+  "def": "Ban đêm — thời gian nghỉ ngơi Đức Chúa Trời ban, và cũng là lúc người công chính suy ngẫm luật pháp Ngài.",
+  "verses": [
+   "gen:1:5",
+   "exo:12:42",
+   "psa:1:2"
+  ]
+ },
+ {
+  "strong": "H216",
+  "lang": "hebrew",
+  "word": "אוֹר",
+  "translit": "ôr",
+  "vn": "ánh sáng",
+  "pos": "danh từ",
+  "def": "Ánh sáng đầu tiên Đức Chúa Trời phán ra — hình ảnh của lẽ thật, sự thánh khiết, và chính Đấng Christ, Ánh Sáng thế gian.",
+  "verses": [
+   "gen:1:3",
+   "exo:10:23",
+   "mich:7:8"
+  ]
+ },
+ {
+  "strong": "H2822",
+  "lang": "hebrew",
+  "word": "חֹשֶׁךְ",
+  "translit": "khô-shekh",
+  "vn": "tối tăm",
+  "pos": "danh từ",
+  "def": "Bóng tối — hình ảnh của sự hỗn độn, tội lỗi và xa cách Đức Chúa Trời, mà ánh sáng Ngài xua tan.",
+  "verses": [
+   "gen:1:2",
+   "exo:10:22",
+   "isa:60:2"
+  ]
+ },
+ {
+  "strong": "H4325",
+  "lang": "hebrew",
+  "word": "מַיִם",
+  "translit": "ma-yim",
+  "vn": "nước",
+  "pos": "danh từ",
+  "def": "Nước ban sự sống — hình ảnh của Đức Thánh Linh, lời Đức Chúa Trời, và sự cứu rỗi Ngài ban nhưng không.",
+  "verses": [
+   "gen:1:2",
+   "exo:17:6",
+   "isa:12:3"
+  ]
+ },
+ {
+  "strong": "H3899",
+  "lang": "hebrew",
+  "word": "לֶחֶם",
+  "translit": "lê-khem",
+  "vn": "bánh",
+  "pos": "danh từ",
+  "def": "Lương thực hằng ngày Đức Chúa Trời cung cấp — và hình bóng về Đấng Christ, Bánh Hằng Sống từ trời xuống.",
+  "verses": [
+   "gen:3:19",
+   "exo:16:15",
+   "deb:8:3"
+  ]
+ },
+ {
+  "strong": "H3196",
+  "lang": "hebrew",
+  "word": "יַיִן",
+  "translit": "ya-yin",
+  "vn": "rượu nho",
+  "pos": "danh từ",
+  "def": "Rượu làm vui lòng người — phước hạnh của Đức Chúa Trời khi dùng tiết độ, nhưng cạm bẫy khi say sưa.",
+  "verses": [
+   "gen:14:18",
+   "deb:14:26",
+   "psa:104:15"
+  ]
+ },
+ {
+  "strong": "H1320",
+  "lang": "hebrew",
+  "word": "בָּשָׂר",
+  "translit": "ba-sar",
+  "vn": "xác thịt / loài người",
+  "pos": "danh từ",
+  "def": "Thân thể hay cả loài người yếu đuối — Đức Chúa Trời hứa đổ Thần Ngài trên mọi xác thịt trong ngày sau rốt.",
+  "verses": [
+   "gen:2:24",
+   "isa:40:5",
+   "joel:2:28"
+  ]
+ },
+ {
+  "strong": "H2077",
+  "lang": "hebrew",
+  "word": "זֶבַח",
+  "translit": "dê-vakh",
+  "vn": "của lễ",
+  "pos": "danh từ",
+  "def": "Sinh tế dâng lên Đức Chúa Trời — Ngài ưa sự vâng lời và lòng ăn năn hơn của lễ hình thức, và Đấng Christ là của lễ trọn vẹn.",
+  "verses": [
+   "exo:12:27",
+   "1sam:15:22",
+   "os:6:6"
+  ]
+ },
+ {
+  "strong": "H5930",
+  "lang": "hebrew",
+  "word": "עֹלָה",
+  "translit": "ô-la",
+  "vn": "của lễ thiêu",
+  "pos": "danh từ",
+  "def": "Của lễ thiêu toàn thiêu trên bàn thờ — dâng trọn cho Đức Chúa Trời, hình bóng về sự dâng mình trọn vẹn của Đấng Christ.",
+  "verses": [
+   "gen:8:20",
+   "gen:22:2",
+   "1sam:7:9"
+  ]
+ }
+]

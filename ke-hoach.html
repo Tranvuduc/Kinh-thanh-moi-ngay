@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a0a0a">
-<title>Kế hoạch đọc Kinh Thánh 1 năm — Kinh Thánh Mỗi Ngày</title>
+<title>Kế hoạch đọc Kinh Thánh — Kinh Thánh Mỗi Ngày</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="style.css">
@@ -26,7 +26,11 @@
 </header>
 
 <main>
-  <h1 style="margin-top:0.4rem">🗓️ Kế hoạch đọc Kinh Thánh trong 1 năm</h1>
+  <h1 style="margin-top:0.4rem">🗓️ Kế hoạch đọc Kinh Thánh</h1>
+
+  <div class="picker" aria-label="Chọn kế hoạch">
+    <select id="plan-sel" aria-label="Chọn kế hoạch đọc"></select>
+  </div>
 
   <div class="card">
     <h2>Tiến độ của bạn</h2>
@@ -60,17 +64,58 @@
 <script defer>
 document.addEventListener('DOMContentLoaded', function () {
   HKT.initTheme();
-  var PLAN_KEY = 'hkt-plan';
-  var doy = HKT.dayOfYear();
-  var todayIdx = Math.min(doy - 1, 364);
+  var PLANS = [
+    { id: 'year',   title: 'Cả Kinh Thánh trong 1 năm', file: 'data/kehoach.json',   key: 'hkt-plan',         total: 365, hasToday: true },
+    { id: 'nt90',   title: 'Tân Ước trong 90 ngày',      file: 'data/plan-nt90.json',  key: 'hkt-plan-nt90',    total: 90,  hasToday: false },
+    { id: 'prov31', title: 'Châm Ngôn trong 31 ngày',    file: 'data/plan-prov31.json', key: 'hkt-plan-prov31', total: 31,  hasToday: false }
+  ];
+  var SEL_KEY = 'hkt-plan-sel';
+  var planSel = document.getElementById('plan-sel');
+  var books = null;
+  var planCache = {};
 
-  Promise.all([HKT.loadBooks(), HKT.loadJSON('data/kehoach.json')])
-    .then(function (res) {
-      var books = res[0], plan = res[1];
-      var done = HKT.storeGet(PLAN_KEY, []);
+  PLANS.forEach(function (p, i) {
+    var o = document.createElement('option');
+    o.value = String(i);
+    o.textContent = p.title;
+    planSel.appendChild(o);
+  });
+  var selIdx = parseInt(HKT.storeGet(SEL_KEY, 0), 10);
+  if (!isFinite(selIdx) || selIdx < 0 || selIdx >= PLANS.length) selIdx = 0;
+  planSel.value = String(selIdx);
+  planSel.addEventListener('change', function () {
+    selIdx = parseInt(planSel.value, 10);
+    HKT.storeSet(SEL_KEY, selIdx);
+    renderPlan();
+  });
+
+  HKT.loadBooks().then(function (b) {
+    books = b;
+    renderPlan();
+  }).catch(function () {
+    document.getElementById('days').innerHTML =
+      '<p>Không tải được kế hoạch đọc. Vui lòng kiểm tra kết nối mạng.</p>';
+  });
+
+  function loadPlan(p) {
+    if (planCache[p.id]) return Promise.resolve(planCache[p.id]);
+    return HKT.loadJSON(p.file).then(function (d) {
+      planCache[p.id] = d;
+      return d;
+    });
+  }
+
+  function renderPlan() {
+    var p = PLANS[selIdx];
+    document.getElementById('days').innerHTML = '<p class="loading">Đang tải kế hoạch…</p>';
+    loadPlan(p).then(function (plan) {
+      var done = HKT.storeGet(p.key, []);
       if (!Array.isArray(done)) done = [];
       var doneSet = {};
       done.forEach(function (i) { doneSet[i] = true; });
+
+      var doy = HKT.dayOfYear();
+      var todayIdx = p.hasToday ? Math.min(doy - 1, p.total - 1) : -1;
 
       var html = '';
       plan.forEach(function (segs, i) {
@@ -86,44 +131,52 @@ document.addEventListener('DOMContentLoaded', function () {
           '<span class="segs">' + segsHtml + '</span></div>';
       });
       document.getElementById('days').innerHTML = html;
-      updateProgress();
+      updateProgress(p, plan.length);
 
-      document.getElementById('days').addEventListener('change', function (e) {
-        var cb = e.target;
-        if (!cb.classList.contains('plan-check')) return;
-        var i = parseInt(cb.dataset.day, 10);
-        var arr = HKT.storeGet(PLAN_KEY, []);
-        if (!Array.isArray(arr)) arr = [];
-        if (cb.checked) { if (arr.indexOf(i) === -1) arr.push(i); }
-        else { arr = arr.filter(function (x) { return x !== i; }); }
-        HKT.storeSet(PLAN_KEY, arr);
-        var row = document.getElementById('day-' + (i + 1));
-        if (row) row.classList.toggle('done', cb.checked);
-        updateProgress();
-      });
-
-      document.getElementById('go-today').addEventListener('click', function () {
-        var el = document.getElementById('day-' + (todayIdx + 1));
-        if (el) el.scrollIntoView({ block: 'center', behavior: 'smooth' });
-      });
-      // auto-scroll to today on load
-      setTimeout(function () {
-        var el = document.getElementById('day-' + (todayIdx + 1));
-        if (el) el.scrollIntoView({ block: 'center' });
-      }, 100);
-    })
-    .catch(function () {
-      document.getElementById('days').innerHTML =
-        '<p>Không tải được kế hoạch đọc. Vui lòng kiểm tra kết nối mạng.</p>';
+      document.getElementById('go-today').style.display = p.hasToday ? '' : 'none';
+      if (p.hasToday) {
+        setTimeout(function () {
+          var el = document.getElementById('day-' + (todayIdx + 1));
+          if (el) el.scrollIntoView({ block: 'center' });
+        }, 100);
+      }
+    }).catch(function () {
+      document.getElementById('days').innerHTML = '<p>Không tải được kế hoạch này.</p>';
     });
+  }
 
-  function updateProgress() {
-    var arr = HKT.storeGet(PLAN_KEY, []);
+  document.getElementById('days').addEventListener('change', function (e) {
+    var cb = e.target;
+    if (!cb.classList.contains('plan-check')) return;
+    var p = PLANS[selIdx];
+    var i = parseInt(cb.dataset.day, 10);
+    var arr = HKT.storeGet(p.key, []);
+    if (!Array.isArray(arr)) arr = [];
+    if (cb.checked) { if (arr.indexOf(i) === -1) arr.push(i); }
+    else { arr = arr.filter(function (x) { return x !== i; }); }
+    HKT.storeSet(p.key, arr);
+    var row = document.getElementById('day-' + (i + 1));
+    if (row) row.classList.toggle('done', cb.checked);
+    updateProgress(p);
+  });
+
+  document.getElementById('go-today').addEventListener('click', function () {
+    var p = PLANS[selIdx];
+    if (!p.hasToday) return;
+    var todayIdx = Math.min(HKT.dayOfYear() - 1, p.total - 1);
+    var el = document.getElementById('day-' + (todayIdx + 1));
+    if (el) el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  });
+
+  function updateProgress(p, total) {
+    p = p || PLANS[selIdx];
+    total = total || p.total;
+    var arr = HKT.storeGet(p.key, []);
     if (!Array.isArray(arr)) arr = [];
     var n = arr.length;
-    document.getElementById('bar').style.width = (n / 365 * 100).toFixed(1) + '%';
+    document.getElementById('bar').style.width = (n / total * 100).toFixed(1) + '%';
     document.getElementById('bar-label').textContent =
-      'Đã đọc ' + n + ' / 365 ngày (' + Math.round(n / 365 * 100) + '%)';
+      'Đã đọc ' + n + ' / ' + total + ' ngày (' + Math.round(n / total * 100) + '%) — ' + p.title;
   }
 
   function esc(s) {
