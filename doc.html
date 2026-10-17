@@ -273,8 +273,11 @@ document.addEventListener('DOMContentLoaded', function () {
     xrefRefs = [];
     document.getElementById('sh-xref-n').textContent = '';
     document.getElementById('sh-xref-list').innerHTML = '<p class="muted">Đang tải…</p>';
+    var myKey = selVerse.key;
+    var myCv = cur.c + ':' + v;
     HKT.loadXref(bk.id).then(function (x) {
-      xrefRefs = (x && x[cur.c + ':' + v]) || [];
+      if (!selVerse || selVerse.key !== myKey) return; // user moved on
+      xrefRefs = (x && x[myCv]) || [];
       document.getElementById('sh-xref-n').textContent =
         xrefRefs.length ? '(' + xrefRefs.length + ')' : '';
     });
