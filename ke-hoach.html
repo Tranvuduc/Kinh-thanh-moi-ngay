@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#141f36">
+<title>Kế hoạch đọc Kinh Thánh 1 năm — Kinh Thánh Mỗi Ngày</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <span class="brand"><a href="index.html">✝️ Kinh Thánh Mỗi Ngày</a></span>
+    <nav class="topnav">
+      <a href="doc.html">Đọc</a>
+      <a href="tim-kiem.html">Tìm kiếm</a>
+      <a href="ke-hoach.html" aria-current="page">Kế hoạch</a>
+      <a href="suy-ngam.html">Suy ngẫm</a>
+    </nav>
+    <button class="theme-toggle" aria-label="Đổi giao diện sáng/tối"><span class="theme-label">🌙 Tối</span></button>
+  </div>
+</header>
+
+<main>
+  <h1 style="margin-top:0.4rem">🗓️ Kế hoạch đọc Kinh Thánh trong 1 năm</h1>
+
+  <div class="card">
+    <h2>Tiến độ của bạn</h2>
+    <div class="progress-wrap">
+      <div class="progress"><div id="bar"></div></div>
+      <div class="progress-label" id="bar-label">Đang tải…</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn small secondary" id="go-today">⏱️ Đến hôm nay</button>
+    </div>
+  </div>
+
+  <div id="days"><p class="loading">Đang tải kế hoạch…</p></div>
+</main>
+
+<footer class="site-footer">
+  <p>Bản Kinh Thánh 1934 (public domain) • Ghi chú AI soạn, chưa được mục sư duyệt</p>
+  <p>Soli Deo Gloria</p>
+</footer>
+
+<script src="app.js" defer></script>
+<script defer>
+document.addEventListener('DOMContentLoaded', function () {
+  HKT.initTheme();
+  var PLAN_KEY = 'hkt-plan';
+  var doy = HKT.dayOfYear();
+  var todayIdx = Math.min(doy - 1, 364);
+
+  Promise.all([HKT.loadBooks(), HKT.loadJSON('data/kehoach.json')])
+    .then(function (res) {
+      var books = res[0], plan = res[1];
+      var done = HKT.storeGet(PLAN_KEY, []);
+      if (!Array.isArray(done)) done = [];
+      var doneSet = {};
+      done.forEach(function (i) { doneSet[i] = true; });
+
+      var html = '';
+      plan.forEach(function (segs, i) {
+        var day = i + 1;
+        var segsHtml = segs.map(function (s) {
+          return '<a href="doc.html?b=' + s.b + '&c=' + s.c1 + '">' + esc(HKT.fmtSeg(books, s)) + '</a>';
+        }).join(' &nbsp;•&nbsp; ');
+        var cls = 'plan-day' + (doneSet[i] ? ' done' : '') + (i === todayIdx ? ' today' : '');
+        html += '<div class="' + cls + '" id="day-' + day + '">' +
+          '<input type="checkbox" class="plan-check" data-day="' + i + '"' +
+          (doneSet[i] ? ' checked' : '') + ' aria-label="Đánh dấu đã đọc ngày ' + day + '">' +
+          '<span class="num">Ngày ' + day + '</span>' +
+          '<span class="segs">' + segsHtml + '</span></div>';
+      });
+      document.getElementById('days').innerHTML = html;
+      updateProgress();
+
+      document.getElementById('days').addEventListener('change', function (e) {
+        var cb = e.target;
+        if (!cb.classList.contains('plan-check')) return;
+        var i = parseInt(cb.dataset.day, 10);
+        var arr = HKT.storeGet(PLAN_KEY, []);
+        if (!Array.isArray(arr)) arr = [];
+        if (cb.checked) { if (arr.indexOf(i) === -1) arr.push(i); }
+        else { arr = arr.filter(function (x) { return x !== i; }); }
+        HKT.storeSet(PLAN_KEY, arr);
+        var row = document.getElementById('day-' + (i + 1));
+        if (row) row.classList.toggle('done', cb.checked);
+        updateProgress();
+      });
+
+      document.getElementById('go-today').addEventListener('click', function () {
+        var el = document.getElementById('day-' + (todayIdx + 1));
+        if (el) el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      });
+      // auto-scroll to today on load
+      setTimeout(function () {
+        var el = document.getElementById('day-' + (todayIdx + 1));
+        if (el) el.scrollIntoView({ block: 'center' });
+      }, 100);
+    })
+    .catch(function () {
+      document.getElementById('days').innerHTML =
+        '<p>Không tải được kế hoạch đọc. Vui lòng kiểm tra kết nối mạng.</p>';
+    });
+
+  function updateProgress() {
+    var arr = HKT.storeGet(PLAN_KEY, []);
+    if (!Array.isArray(arr)) arr = [];
+    var n = arr.length;
+    document.getElementById('bar').style.width = (n / 365 * 100).toFixed(1) + '%';
+    document.getElementById('bar-label').textContent =
+      'Đã đọc ' + n + ' / 365 ngày (' + Math.round(n / 365 * 100) + '%)';
+  }
+
+  function esc(s) {
+    return (s || '').replace(/[&<>"']/g, function (ch) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
+    });
+  }
+});
+</script>
+</body>
+</html>

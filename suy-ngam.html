@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#141f36">
+<title>Suy ngẫm hằng ngày — Kinh Thánh Mỗi Ngày</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <span class="brand"><a href="index.html">✝️ Kinh Thánh Mỗi Ngày</a></span>
+    <nav class="topnav">
+      <a href="doc.html">Đọc</a>
+      <a href="tim-kiem.html">Tìm kiếm</a>
+      <a href="ke-hoach.html">Kế hoạch</a>
+      <a href="suy-ngam.html" aria-current="page">Suy ngẫm</a>
+    </nav>
+    <button class="theme-toggle" aria-label="Đổi giao diện sáng/tối"><span class="theme-label">🌙 Tối</span></button>
+  </div>
+</header>
+
+<main>
+  <h1 style="margin-top:0.4rem">🙏 Suy ngẫm hằng ngày</h1>
+
+  <div class="date-nav" aria-label="Chọn ngày">
+    <button class="btn small secondary" id="prev-day">← Hôm qua</button>
+    <button class="btn small secondary" id="today-btn">Hôm nay</button>
+    <button class="btn small secondary" id="next-day">Ngày mai →</button>
+    <input type="date" id="date-pick" aria-label="Chọn ngày cụ thể">
+  </div>
+
+  <article class="card" id="dev-card">
+    <h2 id="dev-date"></h2>
+    <div id="dev-body"><p class="loading">Đang tải…</p></div>
+    <p class="dev-footer">C. H. Spurgeon — Sổ Séc Của Đức Tin (bản dịch AI, chưa duyệt)</p>
+  </article>
+</main>
+
+<footer class="site-footer">
+  <p>Bản Kinh Thánh 1934 (public domain) • Ghi chú AI soạn, chưa được mục sư duyệt</p>
+  <p>Soli Deo Gloria</p>
+</footer>
+
+<script src="app.js" defer></script>
+<script defer>
+document.addEventListener('DOMContentLoaded', function () {
+  HKT.initTheme();
+  var devs = null;
+  var cur = new Date();
+  cur.setHours(0, 0, 0, 0);
+  var datePick = document.getElementById('date-pick');
+
+  HKT.loadJSON('data/suyngam.json').then(function (d) {
+    devs = d;
+    render();
+  }).catch(function () {
+    document.getElementById('dev-body').innerHTML =
+      '<p>Không tải được bài suy ngẫm. Vui lòng kiểm tra kết nối mạng.</p>';
+  });
+
+  document.getElementById('prev-day').addEventListener('click', function () {
+    cur.setDate(cur.getDate() - 1); render();
+  });
+  document.getElementById('next-day').addEventListener('click', function () {
+    cur.setDate(cur.getDate() + 1); render();
+  });
+  document.getElementById('today-btn').addEventListener('click', function () {
+    cur = new Date(); cur.setHours(0, 0, 0, 0); render();
+  });
+  datePick.addEventListener('change', function () {
+    if (!datePick.value) return;
+    var parts = datePick.value.split('-');
+    cur = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+    render();
+  });
+
+  function findDev(m, d) {
+    var dev = devs.find(function (x) { return x.m === m && x.d === d; });
+    if (!dev && m === 2 && d === 29) {
+      dev = devs.find(function (x) { return x.m === 2 && x.d === 28; }); // non-leap fallback
+    }
+    return dev;
+  }
+
+  function render() {
+    if (!devs) return;
+    var m = cur.getMonth() + 1, d = cur.getDate();
+    var dev = findDev(m, d);
+    datePick.value = iso(cur);
+    var label = cur.toLocaleDateString('vi-VN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    document.getElementById('dev-date').textContent = label;
+    var body = document.getElementById('dev-body');
+    if (!dev) {
+      body.innerHTML = '<p>Chưa có bài suy ngẫm cho ngày này.</p>';
+      return;
+    }
+    var html = '<p class="card-title">' + esc(dev.title) + '</p>' +
+      '<blockquote class="dev-verse">“' + esc(dev.verse) + '”<span class="ref">' + esc(dev.ref) + '</span></blockquote>' +
+      '<div class="dev-body">' +
+      (dev.paras || []).map(function (p) { return '<p>' + esc(p) + '</p>'; }).join('') +
+      '</div>';
+    body.innerHTML = html;
+  }
+
+  function iso(d) {
+    var mm = String(d.getMonth() + 1).padStart(2, '0');
+    var dd = String(d.getDate()).padStart(2, '0');
+    return d.getFullYear() + '-' + mm + '-' + dd;
+  }
+
+  function esc(s) {
+    return (s || '').replace(/[&<>"']/g, function (ch) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
+    });
+  }
+});
+</script>
+</body>
+</html>

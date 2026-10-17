@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#141f36">
+<title>Đọc Kinh Thánh — Kinh Thánh Mỗi Ngày</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <span class="brand"><a href="index.html">✝️ Kinh Thánh Mỗi Ngày</a></span>
+    <nav class="topnav">
+      <a href="doc.html" aria-current="page">Đọc</a>
+      <a href="tim-kiem.html">Tìm kiếm</a>
+      <a href="ke-hoach.html">Kế hoạch</a>
+      <a href="suy-ngam.html">Suy ngẫm</a>
+    </nav>
+    <button class="theme-toggle" aria-label="Đổi giao diện sáng/tối"><span class="theme-label">🌙 Tối</span></button>
+  </div>
+</header>
+
+<main>
+  <div class="picker" aria-label="Chọn sách và đoạn">
+    <select id="book-sel" aria-label="Chọn sách"></select>
+    <select id="chap-sel" aria-label="Chọn đoạn"></select>
+  </div>
+
+  <article class="card">
+    <h1 class="chapter-head" id="chapter-head">…</h1>
+    <div class="scripture" id="chapter-text"><p class="loading">Đang tải…</p></div>
+    <div class="pager">
+      <button class="btn secondary" id="prev-btn">← Đoạn trước</button>
+      <button class="btn secondary" id="next-btn">Đoạn sau →</button>
+    </div>
+  </article>
+
+  <section class="card notes" id="notes-panel" aria-label="Ghi chú học Kinh Thánh">
+    <h2>📝 Ghi chú học Kinh Thánh</h2>
+    <div id="notes-body"><p class="muted">Đang tải ghi chú…</p></div>
+  </section>
+</main>
+
+<div class="action-bar" id="action-bar">
+  <div class="ref" id="ab-ref"></div>
+  <div class="btn-row" style="margin-top:0">
+    <button class="btn small" id="ab-copy">📋 Sao chép câu</button>
+    <button class="btn small" id="ab-share">🔗 Chia sẻ</button>
+    <button class="btn small secondary" id="ab-close">Đóng</button>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <p>Bản Kinh Thánh 1934 (public domain) • Ghi chú AI soạn, chưa được mục sư duyệt</p>
+  <p>Soli Deo Gloria</p>
+</footer>
+
+<script src="app.js" defer></script>
+<script defer>
+document.addEventListener('DOMContentLoaded', function () {
+  HKT.initTheme();
+  var books = null, notes = null, curData = null; // curData = loaded book JSON {id,name,t,ch}
+  var cur = { b: 0, c: 1 };
+  var bookSel = document.getElementById('book-sel');
+  var chapSel = document.getElementById('chap-sel');
+  var selVerse = null; // {b,c,v,text}
+
+  /* ---- study notes: defensive, notes.json may not exist yet ---- */
+  HKT.loadJSON('data/notes.json').then(function (n) {
+    notes = n || {};
+    renderNotes();
+  }).catch(function () {
+    notes = {}; // 404 or invalid -> no notes yet
+    renderNotes();
+  });
+
+  HKT.loadBooks().then(function (b) {
+    books = b;
+    buildBookPicker();
+
+    // default position: URL params > localStorage > Genesis 1
+    var p = HKT.readChapterParams();
+    var last = HKT.storeGet('hkt-last', null);
+    if (p.b != null && p.c != null) { cur.b = p.b; cur.c = p.c; }
+    else if (last && typeof last.b === 'number' && typeof last.c === 'number') {
+      cur.b = last.b; cur.c = last.c;
+    }
+    clampCur();
+    gotoBook(cur.b, cur.c, function () {
+      // deep link to a verse (from search results)
+      var m = window.location.hash.match(/^#v(\d+)$/);
+      if (m) highlightVerse(parseInt(m[1], 10));
+    });
+  }).catch(showLoadError);
+
+  function showLoadError() {
+    document.getElementById('chapter-text').innerHTML =
+      '<p>Không tải được Kinh Thánh. Vui lòng kiểm tra kết nối mạng.</p>';
+  }
+
+  // Load the book's text (cached) then render the chapter.
+  function gotoBook(b, c, done) {
+    cur.b = b; cur.c = c;
+    clampCur();
+    bookSel.value = String(cur.b);
+    HKT.loadBook(books[cur.b].id).then(function (d) {
+      curData = d;
+      buildChapterPicker();
+      renderChapter();
+      syncUrl();
+      if (done) done();
+    }).catch(showLoadError);
+  }
+
+  function clampCur() {
+    if (!books) return;
+    cur.b = Math.max(0, Math.min(books.length - 1, cur.b || 0));
+    var nch = books[cur.b].nc.length;
+    cur.c = Math.max(1, Math.min(nch, cur.c || 1));
+  }
+
+  function buildBookPicker() {
+    bookSel.innerHTML = '';
+    var groups = { old: document.createElement('optgroup'), new: document.createElement('optgroup') };
+    groups.old.label = 'Cựu Ước';
+    groups.new.label = 'Tân Ước';
+    books.forEach(function (bk, i) {
+      var o = document.createElement('option');
+      o.value = String(i);
+      o.textContent = bk.name;
+      (bk.t === 'new' ? groups.new : groups.old).appendChild(o);
+    });
+    bookSel.appendChild(groups.old);
+    bookSel.appendChild(groups.new);
+    bookSel.addEventListener('change', function () {
+      gotoBook(parseInt(bookSel.value, 10), 1);
+    });
+  }
+
+  function buildChapterPicker() {
+    chapSel.innerHTML = '';
+    var nch = books[cur.b].nc.length;
+    for (var c = 1; c <= nch; c++) {
+      var o = document.createElement('option');
+      o.value = String(c);
+      o.textContent = 'Đoạn ' + c;
+      chapSel.appendChild(o);
+    }
+    chapSel.value = String(cur.c);
+    chapSel.onchange = function () {
+      cur.c = parseInt(chapSel.value, 10);
+      renderChapter();
+      syncUrl();
+    };
+  }
+
+  function renderChapter() {
+    clampCur();
+    if (!curData) return;
+    var bk = books[cur.b], chIdx = cur.c - 1, verses = curData.ch[chIdx];
+    document.getElementById('chapter-head').textContent = bk.name + ' ' + cur.c;
+    var html = '';
+    verses.forEach(function (t, i) {
+      var v = i + 1;
+      html += '<span class="verse" id="v' + v + '" data-v="' + v + '"><sup>' + v + '</sup>' +
+        esc(t) + '</span> ';
+    });
+    var txt = document.getElementById('chapter-text');
+    txt.innerHTML = html;
+    txt.querySelectorAll('.verse').forEach(function (el) {
+      el.addEventListener('click', function () { onVerseTap(parseInt(el.dataset.v, 10)); });
+    });
+
+    // prev/next availability (crossing book boundaries)
+    var nch = books[cur.b].nc.length;
+    document.getElementById('prev-btn').disabled = !(cur.c > 1 || cur.b > 0);
+    document.getElementById('next-btn').disabled =
+      !(cur.c < nch || cur.b < books.length - 1);
+
+    // persist position
+    HKT.storeSet('hkt-last', { b: cur.b, c: cur.c });
+
+    hideActionBar();
+    renderNotes();
+    if (chapSel.value !== String(cur.c)) chapSel.value = String(cur.c);
+  }
+
+  document.getElementById('prev-btn').addEventListener('click', function () {
+    if (cur.c > 1) { gotoBook(cur.b, cur.c - 1); }
+    else if (cur.b > 0) { gotoBook(cur.b - 1, books[cur.b - 1].nc.length); }
+  });
+  document.getElementById('next-btn').addEventListener('click', function () {
+    if (cur.c < books[cur.b].nc.length) { gotoBook(cur.b, cur.c + 1); }
+    else if (cur.b < books.length - 1) { gotoBook(cur.b + 1, 1); }
+  });
+
+  function syncUrl() {
+    var url = 'doc.html?b=' + cur.b + '&c=' + cur.c;
+    try { window.history.replaceState(null, '', url); } catch (e) {}
+  }
+
+  /* ---- verse action bar ---- */
+  function onVerseTap(v) {
+    var txt = document.getElementById('chapter-text');
+    txt.querySelectorAll('.verse').forEach(function (el) { el.classList.remove('active'); });
+    var el = txt.querySelector('[data-v="' + v + '"]');
+    if (el) el.classList.add('active');
+    selVerse = { b: cur.b, c: cur.c, v: v, text: curData.ch[cur.c - 1][v - 1] };
+    document.getElementById('ab-ref').textContent =
+      HKT.fmtRef(books, selVerse.b, selVerse.c, selVerse.v);
+    document.getElementById('action-bar').classList.add('show');
+  }
+  function hideActionBar() {
+    document.getElementById('action-bar').classList.remove('show');
+    var txt = document.getElementById('chapter-text');
+    if (txt) txt.querySelectorAll('.verse').forEach(function (el) { el.classList.remove('active'); });
+    selVerse = null;
+  }
+  document.getElementById('ab-close').addEventListener('click', hideActionBar);
+
+  function versePayload() {
+    if (!selVerse) return null;
+    var ref = HKT.fmtRef(books, selVerse.b, selVerse.c, selVerse.v);
+    return { ref: ref, text: ref + '\n' + selVerse.text };
+  }
+  document.getElementById('ab-copy').addEventListener('click', function () {
+    var p = versePayload();
+    if (!p) return;
+    copyText(p.text);
+  });
+  document.getElementById('ab-share').addEventListener('click', function () {
+    var p = versePayload();
+    if (!p) return;
+    if (navigator.share) {
+      navigator.share({ title: 'Kinh Thánh Mỗi Ngày — ' + p.ref, text: p.text })
+        .catch(function () { /* user cancelled */ });
+    } else {
+      copyText(p.text);
+    }
+  });
+  function copyText(t) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(t).then(
+        function () { flashRef('Đã sao chép ✓'); },
+        function () { fallbackCopy(t); });
+    } else {
+      fallbackCopy(t);
+    }
+  }
+  function fallbackCopy(t) {
+    var ta = document.createElement('textarea');
+    ta.value = t;
+    ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); flashRef('Đã sao chép ✓'); }
+    catch (e) { flashRef('Không sao chép được'); }
+    document.body.removeChild(ta);
+  }
+  function flashRef(msg) {
+    var r = document.getElementById('ab-ref');
+    var old = r.textContent;
+    r.textContent = msg;
+    setTimeout(function () { r.textContent = old; }, 1200);
+  }
+
+  function highlightVerse(v) {
+    var el = document.getElementById('v' + v);
+    if (el) {
+      el.scrollIntoView({ block: 'center' });
+      onVerseTap(v);
+    }
+  }
+
+  /* ---- study notes panel ---- */
+  function renderNotes() {
+    var body = document.getElementById('notes-body');
+    if (!books || !notes) return; // still loading
+    var bk = books[cur.b];
+    var key = bk.id + ':' + cur.c;
+    var note = notes[key] || notes[key.toUpperCase()];
+    if (!note) {
+      body.innerHTML = '<p class="muted">Ghi chú cho đoạn này đang được soạn…</p>';
+      return;
+    }
+    var html = '';
+    if (note.context) html += '<h3>🌍 Bối cảnh</h3><p>' + esc(note.context) + '</p>';
+    if (note.exegesis && note.exegesis.length) {
+      html += '<h3>🔍 Giải nghĩa</h3><ul>' +
+        note.exegesis.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
+    }
+    if (note.application && note.application.length) {
+      html += '<h3>🙌 Áp dụng</h3><ul>' +
+        note.application.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
+    }
+    if (note.prayer) html += '<h3>🙏 Cầu nguyện</h3><div class="prayer">' + esc(note.prayer) + '</div>';
+    if (note.source) html += '<p class="src">Nguồn: ' + esc(note.source) + '</p>';
+    body.innerHTML = html || '<p class="muted">Ghi chú cho đoạn này đang được soạn…</p>';
+  }
+
+  function esc(s) {
+    return (s || '').replace(/[&<>"']/g, function (ch) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
+    });
+  }
+});
+</script>
+</body>
+</html>

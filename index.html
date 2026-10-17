@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#141f36">
+<meta name="description" content="Kinh Thánh Mỗi Ngày — học Lời Chúa mỗi ngày: giải nghĩa Cải Chánh, sâu nhiệm và áp dụng.">
+<title>Kinh Thánh Mỗi Ngày — Học Lời Chúa mỗi ngày</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="favicon.svg">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <span class="brand"><a href="index.html">✝️ Kinh Thánh Mỗi Ngày</a></span>
+    <nav class="topnav">
+      <a href="doc.html">Đọc</a>
+      <a href="tim-kiem.html">Tìm kiếm</a>
+      <a href="ke-hoach.html">Kế hoạch</a>
+      <a href="suy-ngam.html">Suy ngẫm</a>
+    </nav>
+    <button class="theme-toggle" aria-label="Đổi giao diện sáng/tối"><span class="theme-label">🌙 Tối</span></button>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>KINH THÁNH MỖI NGÀY</h1>
+    <p class="tagline">Học Lời Chúa mỗi ngày — giải nghĩa Cải Chánh, sâu nhiệm và áp dụng</p>
+  </section>
+
+  <section class="card today-dev" id="devotion-card">
+    <h2>📖 Suy ngẫm hôm nay</h2>
+    <p class="loading">Đang tải…</p>
+  </section>
+
+  <section class="card" id="verse-card">
+    <h2>✨ Câu Kinh Thánh hôm nay</h2>
+    <p class="loading">Đang tải…</p>
+  </section>
+
+  <section class="card" id="plan-card">
+    <h2>📅 Phần đọc hôm nay</h2>
+    <p class="loading">Đang tải…</p>
+  </section>
+
+  <section class="card" id="continue-card" hidden>
+    <h2>▶️ Đọc tiếp</h2>
+    <div class="btn-row"><a class="btn" id="continue-btn" href="doc.html">Tiếp tục</a></div>
+  </section>
+
+  <nav class="nav-grid" aria-label="Điều hướng chính">
+    <a class="nav-card" href="doc.html"><span class="ico">📜</span>Đọc Kinh Thánh</a>
+    <a class="nav-card" href="tim-kiem.html"><span class="ico">🔎</span>Tìm kiếm</a>
+    <a class="nav-card" href="ke-hoach.html"><span class="ico">🗓️</span>Kế hoạch 1 năm</a>
+    <a class="nav-card" href="suy-ngam.html"><span class="ico">🙏</span>Suy ngẫm hằng ngày</a>
+  </nav>
+</main>
+
+<footer class="site-footer">
+  <p>Bản Kinh Thánh 1934 (public domain) • Ghi chú AI soạn, chưa được mục sư duyệt</p>
+  <p>Soli Deo Gloria</p>
+</footer>
+
+<script src="app.js" defer></script>
+<script defer>
+document.addEventListener('DOMContentLoaded', function () {
+  HKT.initTheme();
+  var doy = HKT.dayOfYear();
+  var today = new Date();
+
+  /* ---- today's devotion ---- */
+  HKT.loadJSON('data/suyngam.json').then(function (devs) {
+    var m = today.getMonth() + 1, d = today.getDate();
+    var dev = devs.find(function (x) { return x.m === m && x.d === d; });
+    if (!dev && m === 2 && d === 29) {
+      dev = devs.find(function (x) { return x.m === 2 && x.d === 28; });
+    }
+    var el = document.getElementById('devotion-card');
+    if (dev) {
+      el.innerHTML = '<h2>📖 Suy ngẫm hôm nay</h2>' +
+        '<p class="card-title">' + esc(dev.title) + '</p>' +
+        '<p class="card-ref">' + esc(dev.ref) + '</p>' +
+        '<p>' + esc(dev.paras && dev.paras[0] ? dev.paras[0].slice(0, 220) : '') +
+        (dev.paras && dev.paras[0] && dev.paras[0].length > 220 ? '…' : '') + '</p>' +
+        '<div class="btn-row"><a class="btn small" href="suy-ngam.html">Đọc trọn bài →</a></div>';
+    } else {
+      el.innerHTML = '<h2>📖 Suy ngẫm hôm nay</h2><p>Chưa có bài suy ngẫm cho hôm nay.</p>';
+    }
+  }).catch(function () {
+    document.getElementById('devotion-card').innerHTML =
+      '<h2>📖 Suy ngẫm hôm nay</h2><p>Không tải được bài suy ngẫm.</p>';
+  });
+
+  /* ---- verse of the day (from precomputed votd.json) ---- */
+  HKT.loadJSON('data/votd.json').then(function (votd) {
+    var pick = votd[(doy - 1) % votd.length];
+    var el = document.getElementById('verse-card');
+    el.innerHTML = '<h2>✨ Câu Kinh Thánh hôm nay</h2>' +
+      '<p class="scripture">“' + esc(pick.text) + '”</p>' +
+      '<p class="card-ref"><a href="doc.html?b=' + pick.b + '&c=' + pick.c + '#v' + pick.v + '">' +
+      esc(pick.ref) + '</a></p>';
+  });
+
+  /* ---- today's reading plan ---- */
+  Promise.all([HKT.loadBooks(), HKT.loadJSON('data/kehoach.json')])
+    .then(function (res) {
+      var books = res[0], plan = res[1];
+      var dayIdx = Math.min(doy - 1, plan.length - 1);
+      var segs = plan[dayIdx] || [];
+      var el = document.getElementById('plan-card');
+      var html = '<h2>📅 Phần đọc hôm nay <span style="font-weight:400;text-transform:none;letter-spacing:0">(Ngày ' +
+        (dayIdx + 1) + ')</span></h2><div class="btn-row">';
+      segs.forEach(function (s) {
+        html += '<a class="btn small secondary" href="doc.html?b=' + s.b + '&c=' + s.c1 + '">' +
+          esc(HKT.fmtSeg(books, s)) + '</a>';
+      });
+      html += '</div><div class="btn-row"><a class="btn small" href="ke-hoach.html">Xem kế hoạch cả năm →</a></div>';
+      el.innerHTML = html;
+    })
+    .catch(function () {
+      document.getElementById('plan-card').innerHTML =
+        '<h2>📅 Phần đọc hôm nay</h2><p>Không tải được kế hoạch đọc.</p>';
+    });
+
+  /* ---- continue reading ---- */
+  var last = HKT.storeGet('hkt-last', null);
+  if (last && typeof last.b === 'number' && typeof last.c === 'number') {
+    HKT.loadBooks().then(function (books) {
+      var card = document.getElementById('continue-card');
+      card.hidden = false;
+      document.getElementById('continue-btn').textContent =
+        'Tiếp tục: ' + books[last.b].name + ' ' + last.c;
+      document.getElementById('continue-btn').href =
+        'doc.html?b=' + last.b + '&c=' + last.c;
+    });
+  }
+
+  function esc(s) {
+    return (s || '').replace(/[&<>"']/g, function (ch) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
+    });
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#141f36">
+<title>Tìm kiếm Kinh Thánh — Kinh Thánh Mỗi Ngày</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <span class="brand"><a href="index.html">✝️ Kinh Thánh Mỗi Ngày</a></span>
+    <nav class="topnav">
+      <a href="doc.html">Đọc</a>
+      <a href="tim-kiem.html" aria-current="page">Tìm kiếm</a>
+      <a href="ke-hoach.html">Kế hoạch</a>
+      <a href="suy-ngam.html">Suy ngẫm</a>
+    </nav>
+    <button class="theme-toggle" aria-label="Đổi giao diện sáng/tối"><span class="theme-label">🌙 Tối</span></button>
+  </div>
+</header>
+
+<main>
+  <h1 style="margin-top:0.4rem">🔎 Tìm kiếm Kinh Thánh</h1>
+  <p style="color:var(--text-soft);margin-top:-0.5rem">Tìm trong 31.102 câu Kinh Thánh — không phân biệt dấu.</p>
+
+  <div class="search-box">
+    <input type="search" id="q" placeholder="Nhập từ hoặc cụm từ… (vd: an dien)" autocomplete="off" aria-label="Từ khóa tìm kiếm">
+  </div>
+  <p class="result-count" id="count"></p>
+  <div id="results"><p class="loading" id="load-msg">Đang tải Kinh Thánh…</p></div>
+</main>
+
+<footer class="site-footer">
+  <p>Bản Kinh Thánh 1934 (public domain) • Ghi chú AI soạn, chưa được mục sư duyệt</p>
+  <p>Soli Deo Gloria</p>
+</footer>
+
+<script src="app.js" defer></script>
+<script defer>
+document.addEventListener('DOMContentLoaded', function () {
+  HKT.initTheme();
+  var corpus = null; // [{b,c,v,text,norm}]
+  var books = null;
+  var input = document.getElementById('q');
+  var resultsEl = document.getElementById('results');
+  var countEl = document.getElementById('count');
+  var timer = null;
+  var MAX_SHOW = 200;
+
+  HKT.loadBooks().then(function (meta) {
+    books = meta;
+    var jobs = meta.map(function (bk) { return HKT.loadBook(bk.id); });
+    return Promise.all(jobs);
+  }).then(function (datas) {
+    corpus = [];
+    datas.forEach(function (bk, bi) {
+      bk.ch.forEach(function (ch, ci) {
+        ch.forEach(function (t, vi) {
+          corpus.push({ b: bi, c: ci + 1, v: vi + 1, text: t, norm: HKT.normalizeVN(t) });
+        });
+      });
+    });
+    var lm = document.getElementById('load-msg');
+    if (lm) lm.textContent = 'Đã sẵn sàng tìm kiếm.';
+  }).catch(function () {
+    resultsEl.innerHTML = '<p>Không tải được Kinh Thánh. Vui lòng kiểm tra kết nối mạng.</p>';
+  });
+
+  input.addEventListener('input', function () {
+    clearTimeout(timer);
+    timer = setTimeout(function () { doSearch(input.value); }, 300);
+  });
+
+  function doSearch(raw) {
+    var q = HKT.normalizeVN(raw.trim());
+    if (!corpus) {
+      resultsEl.innerHTML = '<p class="loading">Đang tải Kinh Thánh…</p>';
+      return;
+    }
+    if (q.length < 2) {
+      resultsEl.innerHTML = '';
+      countEl.textContent = '';
+      return;
+    }
+    var hits = [];
+    for (var i = 0; i < corpus.length && hits.length <= MAX_SHOW; i++) {
+      if (corpus[i].norm.indexOf(q) !== -1) hits.push(corpus[i]);
+    }
+    var capped = hits.length > MAX_SHOW;
+    hits = hits.slice(0, MAX_SHOW);
+
+    if (!hits.length) {
+      countEl.textContent = 'Không tìm thấy kết quả.';
+      resultsEl.innerHTML = '';
+      return;
+    }
+    countEl.textContent = 'Tìm thấy ' + hits.length + (capped ? '+' : '') + ' kết quả' +
+      (capped ? ' (hiển thị ' + MAX_SHOW + ' đầu tiên)' : '') + '.';
+    resultsEl.innerHTML = hits.map(function (h) {
+      return '<div class="result"><a class="rref" href="doc.html?b=' + h.b + '&c=' + h.c + '#v' + h.v + '">' +
+        esc(HKT.fmtRef(books, h.b, h.c, h.v)) + '</a>' +
+        '<div class="rsnip">' + snippet(h.text, h.norm, q) + '</div></div>';
+    }).join('');
+  }
+
+  // normalizeVN is length-preserving for Vietnamese, so norm indexes map to text indexes
+  function snippet(text, norm, q) {
+    var at = norm.indexOf(q);
+    if (at === -1) return esc(text.slice(0, 90)) + '…';
+    var start = Math.max(0, at - 45);
+    var end = Math.min(text.length, at + q.length + 45);
+    var before = esc(text.slice(start, at));
+    var match = esc(text.slice(at, at + q.length));
+    var after = esc(text.slice(at + q.length, end));
+    return (start > 0 ? '…' : '') + before + '<mark>' + match + '</mark>' + after + (end < text.length ? '…' : '');
+  }
+
+  function esc(s) {
+    return (s || '').replace(/[&<>"']/g, function (ch) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
+    });
+  }
+});
+</script>
+</body>
+</html>
