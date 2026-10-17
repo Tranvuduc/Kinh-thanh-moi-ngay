@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0a">
+<title>Bản đồ &amp; hành trình Kinh Thánh — Kinh Thánh Mỗi Ngày</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <span class="brand"><a href="index.html">✝️ Kinh Thánh Mỗi Ngày</a></span>
+    <nav class="topnav">
+      <a href="doc.html">Đọc</a>
+      <a href="tim-kiem.html">Tìm kiếm</a>
+      <a href="ke-hoach.html">Kế hoạch</a>
+      <a href="suy-ngam.html">Suy ngẫm</a>
+      <a href="chu-de.html">Chủ đề</a>
+      <a href="danh-dau.html">Đã lưu</a>
+    </nav>
+    <button class="theme-toggle" aria-label="Đổi giao diện sáng/tối"><span class="theme-label">🌙 Tối</span></button>
+  </div>
+</header>
+
+<main id="main">
+  <p class="loading">Đang tải…</p>
+</main>
+
+<nav class="tabbar" aria-label="Điều hướng">
+  <a href="index.html"><span class="tico">🏠</span>Trang chủ</a>
+  <a href="doc.html"><span class="tico">📜</span>Đọc</a>
+  <a href="tim-kiem.html"><span class="tico">🔎</span>Tìm kiếm</a>
+  <a href="chu-de.html"><span class="tico">📚</span>Chủ đề</a>
+  <a href="danh-dau.html"><span class="tico">🔖</span>Đã lưu</a>
+</nav>
+
+<footer class="site-footer">
+  <p>Bản Kinh Thánh 1934 (public domain) • Ghi chú AI soạn, chưa được mục sư duyệt</p>
+  <p>Soli Deo Gloria</p>
+</footer>
+
+<script src="app.js" defer></script>
+<script defer>
+document.addEventListener('DOMContentLoaded', function () {
+  HKT.initTheme();
+  var main = document.getElementById('main');
+  var books = null, bookData = {};
+  var MAPS = [
+    { id: 'exodus', title: 'Hành trình Xuất Hành', desc: 'Từ Ai Cập qua Biển Đỏ, lang thang 40 năm trong đồng vắng Si-nai, đến bờ sông Giô-đanh trước Đất Hứa.',
+      verses: ['exo:14:21', 'exo:14:22', 'num:33:1'] },
+    { id: 'conquest', title: 'Đất Ca-na-an', desc: 'Mười hai chi phái nhận phần đất thừa hưởng — từ sông Giô-đanh đến Địa Trung Hải, từ đồng bằng đến đồi núi.',
+      verses: ['jos:1:3', 'jos:21:43'] },
+    { id: 'galilee', title: 'Chức vụ tại Ga-li-lê', desc: 'Biển Ga-li-lê, Ca-bê-na-um, Na-xa-rét — nơi Chúa Giê-xu giảng dạy, chữa lành và kêu gọi môn đồ.',
+      verses: ['mat:4:23', 'luk:5:1'] },
+    { id: 'paul', title: 'Các hành trình của Phao-lô', desc: 'Từ An-ti-ốt qua Tiểu Á, Ma-xê-đoan, Hy Lạp đến Rô-ma — Phúc Âm lan ra khắp thế giới ngoại giáo.',
+      verses: ['act:13:2', 'act:16:9', 'rom:15:24'] },
+    { id: 'jerusalem', title: 'Giê-ru-sa-lem thời Chúa Giê-xu', desc: 'Thành thánh trên đồi, đền thờ nguy nga, thung lũng Xết-rôn — bối cảnh tuần lễ thương khó và sự phục sinh.',
+      verses: ['luk:19:41', 'mat:21:12'] }
+  ];
+
+  HKT.loadBooks().then(function (b) { books = b; render(); })
+    .catch(function () { main.innerHTML = '<p>Không tải được dữ liệu.</p>'; });
+
+  function loadBookData(bookId) {
+    if (bookData[bookId]) return Promise.resolve(bookData[bookId]);
+    return HKT.loadBook(bookId).then(function (d) { bookData[bookId] = d; return d; });
+  }
+  function verseText(key) {
+    var k = HKT.keyToIndices(books, key);
+    if (k.b < 0) return Promise.resolve('');
+    return loadBookData(books[k.b].id).then(function (d) {
+      var ch = d.ch[k.c - 1];
+      return (ch && ch[k.v - 1]) || '';
+    }).catch(function () { return ''; });
+  }
+
+  function render() {
+    var html = '<h1 class="chapter-head">🗺️ Bản đồ &amp; hành trình</h1>' +
+      '<p class="muted" style="text-align:center;margin-top:-0.6rem">Địa lý Kinh Thánh qua tranh màu nước</p>';
+    MAPS.forEach(function (m) {
+      html += '<section class="card"><h3 style="margin-top:0">' + esc(m.title) + '</h3>' +
+        '<img class="topic-hero" src="img/maps/' + m.id + '.jpg" alt="' + esc(m.title) + '" loading="lazy">' +
+        '<p>' + esc(m.desc) + '</p><div data-map="' + m.id + '"></div></section>';
+    });
+    html += '<div class="btn-row"><a class="btn small secondary" href="thu-vien.html">← Thư viện</a></div>' +
+      '<p class="src" style="text-align:center">Nguồn: AI soạn, chưa được mục sư duyệt</p>';
+    main.innerHTML = html;
+
+    var proms = [];
+    MAPS.forEach(function (m) {
+      m.verses.forEach(function (key) {
+        proms.push(verseText(key).then(function (tx) { return { map: m.id, key: key, text: tx }; }));
+      });
+    });
+    Promise.all(proms).then(function (rows) {
+      rows.forEach(function (r) {
+        var k = HKT.keyToIndices(books, r.key);
+        var link = k.b >= 0 ? 'doc.html?b=' + k.b + '&c=' + k.c + '#v' + k.v : '#';
+        var box = main.querySelector('[data-map="' + r.map + '"]');
+        if (box) box.innerHTML += '<div class="topic-verse"><a class="tv-ref" href="' + link + '">' +
+          esc(HKT.keyToRef(books, r.key)) + '</a>' +
+          (r.text ? '<p class="tv-text">“' + esc(r.text) + '”</p>' : '') + '</div>';
+      });
+    });
+  }
+
+  function esc(s) {
+    return (s || '').replace(/[&<>"']/g, function (ch) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
+    });
+  }
+});
+</script>
+</body>
+</html>

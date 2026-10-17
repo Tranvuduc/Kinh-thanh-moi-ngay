@@ -2,7 +2,7 @@
 // Precache the app shell only. Bible text loads per-book (data/bible/<id>.json)
 // and other data JSON are cached on first fetch (cache-first), so install
 // never risks failing on a big file.
-var CACHE = 'hkt-v5';
+var CACHE = 'hkt-v6';
 var SHELL = [
   './',
   'index.html',
@@ -19,7 +19,23 @@ var SHELL = [
   'manifest.json',
   'data/books.json',
   'data/notes.json',
-  'data/topics.json'
+  'data/topics.json',
+  'data/giaoly.json',
+  'data/nhanvat.json',
+  'data/prayers.json',
+  'data/parables.json',
+  'data/names.json',
+  'data/prophecies.json',
+  'data/creeds.json',
+  'data/glossary.json',
+  'thu-vien.html',
+  'giao-ly.html',
+  'nhan-vat.html',
+  'ban-do.html',
+  'chuyen-de.html',
+  'tien-tri.html',
+  'tin-dieu.html',
+  'thuat-ngu.html'
 ];
 
 self.addEventListener('install', function (e) {

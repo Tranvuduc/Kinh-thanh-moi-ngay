@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0a">
+<title>Giáo lý vấn đáp Westminster — Kinh Thánh Mỗi Ngày</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <span class="brand"><a href="index.html">✝️ Kinh Thánh Mỗi Ngày</a></span>
+    <nav class="topnav">
+      <a href="doc.html">Đọc</a>
+      <a href="tim-kiem.html">Tìm kiếm</a>
+      <a href="ke-hoach.html">Kế hoạch</a>
+      <a href="suy-ngam.html">Suy ngẫm</a>
+      <a href="chu-de.html">Chủ đề</a>
+      <a href="danh-dau.html">Đã lưu</a>
+    </nav>
+    <button class="theme-toggle" aria-label="Đổi giao diện sáng/tối"><span class="theme-label">🌙 Tối</span></button>
+  </div>
+</header>
+
+<main id="main">
+  <p class="loading">Đang tải…</p>
+</main>
+
+<nav class="tabbar" aria-label="Điều hướng">
+  <a href="index.html"><span class="tico">🏠</span>Trang chủ</a>
+  <a href="doc.html"><span class="tico">📜</span>Đọc</a>
+  <a href="tim-kiem.html"><span class="tico">🔎</span>Tìm kiếm</a>
+  <a href="chu-de.html"><span class="tico">📚</span>Chủ đề</a>
+  <a href="danh-dau.html"><span class="tico">🔖</span>Đã lưu</a>
+</nav>
+
+<footer class="site-footer">
+  <p>Westminster Shorter Catechism (1647, public domain) • Bản dịch AI, chưa được mục sư duyệt</p>
+  <p>Soli Deo Gloria</p>
+</footer>
+
+<script src="app.js" defer></script>
+<script defer>
+document.addEventListener('DOMContentLoaded', function () {
+  HKT.initTheme();
+  var main = document.getElementById('main');
+  var books = null, qa = null;
+
+  Promise.all([HKT.loadBooks(), HKT.loadJSON('data/giaoly.json')])
+    .then(function (res) {
+      books = res[0]; qa = res[1] || [];
+      render();
+    })
+    .catch(function () { main.innerHTML = '<p>Không tải được dữ liệu.</p>'; });
+
+  function render() {
+    var html = '<h1 class="chapter-head">❓ Giáo lý vấn đáp Westminster</h1>' +
+      '<p class="muted" style="text-align:center;margin-top:-0.6rem">107 câu hỏi &amp; đáp — Hội nghị Westminster 1647</p>' +
+      '<p class="muted" style="text-align:center;font-size:0.85rem">Bản dịch mới từ nguyên bản 1647. Câu 95 giữ lập trường báp-têm trẻ em của Westminster — anh em Báp-têm Cải Chánh có quan điểm khác.</p>' +
+      '<div class="search-box"><input id="gq" type="search" placeholder="Tìm câu hỏi…" aria-label="Tìm câu hỏi"></div>' +
+      '<div id="glist"></div>' +
+      '<div class="btn-row"><a class="btn small secondary" href="thu-vien.html">← Thư viện</a></div>';
+    main.innerHTML = html;
+    document.getElementById('gq').addEventListener('input', function (e) { draw(e.target.value); });
+    draw('');
+  }
+
+  function draw(q) {
+    var nq = HKT.normalizeVN(q.trim());
+    var html = '';
+    qa.forEach(function (item) {
+      if (nq) {
+        var hay = HKT.normalizeVN(item.q + ' ' + item.a);
+        if (hay.indexOf(nq) === -1) return;
+      }
+      var refs = (item.refs || []).map(function (r) {
+        var k = HKT.keyToIndices(books, r.key);
+        var link = k.b >= 0 ? 'doc.html?b=' + k.b + '&c=' + k.c + '#v' + k.v : '#';
+        return '<a class="tv-ref" style="font-size:0.9rem;margin-right:0.6rem" href="' + link + '">' +
+          esc(r.ref || HKT.keyToRef(books, r.key)) + '</a>';
+      }).join('');
+      html += '<details class="card note-sec" style="margin:0.6rem 0">' +
+        '<summary><span class="count" style="min-width:2.2rem">Câu ' + item.n + '</span> ' + esc(item.q) + '</summary>' +
+        '<div class="note-sec-body"><p>' + esc(item.a) + '</p>' +
+        (refs ? '<p style="margin-top:0.5rem">' + refs + '</p>' : '') + '</div></details>';
+    });
+    document.getElementById('glist').innerHTML = html || '<p class="empty-note">Không tìm thấy.</p>';
+  }
+
+  function esc(s) {
+    return (s || '').replace(/[&<>"']/g, function (ch) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
+    });
+  }
+});
+</script>
+</body>
+</html>

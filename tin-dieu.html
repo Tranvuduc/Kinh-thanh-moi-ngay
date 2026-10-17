@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0a">
+<title>Tín điều &amp; tuyên xưng đức tin — Kinh Thánh Mỗi Ngày</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <span class="brand"><a href="index.html">✝️ Kinh Thánh Mỗi Ngày</a></span>
+    <nav class="topnav">
+      <a href="doc.html">Đọc</a>
+      <a href="tim-kiem.html">Tìm kiếm</a>
+      <a href="ke-hoach.html">Kế hoạch</a>
+      <a href="suy-ngam.html">Suy ngẫm</a>
+      <a href="chu-de.html">Chủ đề</a>
+      <a href="danh-dau.html">Đã lưu</a>
+    </nav>
+    <button class="theme-toggle" aria-label="Đổi giao diện sáng/tối"><span class="theme-label">🌙 Tối</span></button>
+  </div>
+</header>
+
+<main id="main">
+  <p class="loading">Đang tải…</p>
+</main>
+
+<nav class="tabbar" aria-label="Điều hướng">
+  <a href="index.html"><span class="tico">🏠</span>Trang chủ</a>
+  <a href="doc.html"><span class="tico">📜</span>Đọc</a>
+  <a href="tim-kiem.html"><span class="tico">🔎</span>Tìm kiếm</a>
+  <a href="chu-de.html"><span class="tico">📚</span>Chủ đề</a>
+  <a href="danh-dau.html"><span class="tico">🔖</span>Đã lưu</a>
+</nav>
+
+<footer class="site-footer">
+  <p>Các tín điều cổ (public domain) • Bản dịch AI, chưa được mục sư duyệt</p>
+  <p>Soli Deo Gloria</p>
+</footer>
+
+<script src="app.js" defer></script>
+<script defer>
+document.addEventListener('DOMContentLoaded', function () {
+  HKT.initTheme();
+  var main = document.getElementById('main');
+  HKT.loadJSON('data/creeds.json')
+    .then(function (creeds) {
+      var html = '<h1 class="chapter-head">📜 Tín điều &amp; tuyên xưng đức tin</h1>' +
+        '<p class="muted" style="text-align:center;margin-top:-0.6rem">Di sản đức tin của Hội Thánh — bản dịch mới từ nguyên bản</p>';
+      (creeds || []).forEach(function (c) {
+        html += '<section class="card"><h3 style="margin-top:0">' + esc(c.title) + '</h3>' +
+          (c.intro ? '<p class="muted">' + esc(c.intro) + '</p>' : '') +
+          '<ol class="creed-list">' +
+          (c.articles || []).map(function (a) {
+            return '<li><p class="creed-text">“' + esc(a.t) + '”</p>' +
+              (a.note ? '<p class="tv-note">' + esc(a.note) + '</p>' : '') + '</li>';
+          }).join('') + '</ol></section>';
+      });
+      html += '<div class="btn-row"><a class="btn small secondary" href="thu-vien.html">← Thư viện</a></div>' +
+        '<p class="src" style="text-align:center">Bản dịch: AI soạn, chưa được mục sư duyệt</p>';
+      main.innerHTML = html;
+    })
+    .catch(function () { main.innerHTML = '<p>Không tải được dữ liệu.</p>'; });
+
+  function esc(s) {
+    return (s || '').replace(/[&<>"']/g, function (ch) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
+    });
+  }
+});
+</script>
+</body>
+</html>

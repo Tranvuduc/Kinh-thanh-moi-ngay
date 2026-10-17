@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0a">
+<title>Thư viện học Kinh Thánh — Kinh Thánh Mỗi Ngày</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <span class="brand"><a href="index.html">✝️ Kinh Thánh Mỗi Ngày</a></span>
+    <nav class="topnav">
+      <a href="doc.html">Đọc</a>
+      <a href="tim-kiem.html">Tìm kiếm</a>
+      <a href="ke-hoach.html">Kế hoạch</a>
+      <a href="suy-ngam.html">Suy ngẫm</a>
+      <a href="chu-de.html">Chủ đề</a>
+      <a href="danh-dau.html">Đã lưu</a>
+    </nav>
+    <button class="theme-toggle" aria-label="Đổi giao diện sáng/tối"><span class="theme-label">🌙 Tối</span></button>
+  </div>
+</header>
+
+<main>
+  <h1 class="chapter-head">📚 Thư viện học Kinh Thánh</h1>
+  <p class="muted" style="text-align:center;margin-top:-0.6rem">Học sâu Lời Chúa theo từng chuyên đề</p>
+
+  <nav class="nav-grid" aria-label="Thư viện">
+    <a class="nav-card" href="giao-ly.html"><span class="ico">❓</span>Giáo lý vấn đáp Westminster</a>
+    <a class="nav-card" href="nhan-vat.html"><span class="ico">👤</span>Nhân vật Kinh Thánh</a>
+    <a class="nav-card" href="ban-do.html"><span class="ico">🗺️</span>Bản đồ &amp; hành trình</a>
+    <a class="nav-card" href="chuyen-de.html?c=prayers"><span class="ico">🙏</span>Lời cầu nguyện trong Kinh Thánh</a>
+    <a class="nav-card" href="chuyen-de.html?c=parables"><span class="ico">💬</span>Ẩn dụ của Chúa Giê-xu</a>
+    <a class="nav-card" href="chuyen-de.html?c=names"><span class="ico">✨</span>Danh xưng của Đức Chúa Trời</a>
+    <a class="nav-card" href="tien-tri.html"><span class="ico">🔮</span>Tiên tri về Đấng Mết-si-a</a>
+    <a class="nav-card" href="tin-dieu.html"><span class="ico">📜</span>Tín điều &amp; tuyên xưng</a>
+    <a class="nav-card" href="thuat-ngu.html"><span class="ico">🎓</span>Thuật ngữ thần học</a>
+    <a class="nav-card" href="chu-de.html"><span class="ico">📖</span>Chủ đề học Kinh Thánh</a>
+    <a class="nav-card" href="tu-ngu.html"><span class="ico">🔤</span>Từ điển nguyên ngữ</a>
+  </nav>
+  <p class="src" style="text-align:center">Tất cả nội dung do AI soạn, chưa được mục sư duyệt.</p>
+</main>
+
+<nav class="tabbar" aria-label="Điều hướng">
+  <a href="index.html"><span class="tico">🏠</span>Trang chủ</a>
+  <a href="doc.html"><span class="tico">📜</span>Đọc</a>
+  <a href="tim-kiem.html"><span class="tico">🔎</span>Tìm kiếm</a>
+  <a href="chu-de.html"><span class="tico">📚</span>Chủ đề</a>
+  <a href="danh-dau.html"><span class="tico">🔖</span>Đã lưu</a>
+</nav>
+
+<footer class="site-footer">
+  <p>Bản Kinh Thánh 1934 (public domain) • Ghi chú AI soạn, chưa được mục sư duyệt</p>
+  <p>Soli Deo Gloria</p>
+</footer>
+
+<script src="app.js" defer></script>
+<script defer>
+document.addEventListener('DOMContentLoaded', function () { HKT.initTheme(); });
+</script>
+</body>
+</html>
