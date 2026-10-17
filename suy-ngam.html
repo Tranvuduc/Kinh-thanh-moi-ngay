@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#141f36">
+<meta name="theme-color" content="#0a0a0a">
 <title>Suy ngẫm hằng ngày — Kinh Thánh Mỗi Ngày</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="manifest" href="manifest.json">
@@ -37,8 +37,8 @@
 
   <article class="card" id="dev-card">
     <h2 id="dev-date"></h2>
+    <div class="toolbar" style="margin-top:0"><button class="btn small" id="dev-audio-btn">🔊 Nghe</button></div>
     <div id="dev-body"><p class="loading">Đang tải…</p></div>
-    <div class="btn-row"><button class="btn small" id="dev-audio-btn">🔊 Nghe bài này</button></div>
     <p class="dev-footer">C. H. Spurgeon — Sổ Séc Của Đức Tin (bản dịch AI, chưa duyệt)</p>
   </article>
 </main>
@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function stopDevAudio() {
     if (devAudioCtrl) { devAudioCtrl.stop(); devAudioCtrl = null; }
-    devAudioBtn.innerHTML = '🔊 Nghe bài này';
+    devAudioBtn.innerHTML = '🔊 Nghe';
   }
   devAudioBtn.addEventListener('click', function () {
     if (!('speechSynthesis' in window)) {
@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     if (devAudioCtrl) { stopDevAudio(); return; }
     if (!devParts.length) return;
-    devAudioBtn.innerHTML = '⏹️ Dừng đọc';
+    devAudioBtn.innerHTML = '⏹️ Dừng';
     devAudioCtrl = HKT.speakSequence(devParts, null, stopDevAudio);
     if (!devAudioCtrl) stopDevAudio();
   });

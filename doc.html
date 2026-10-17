@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#141f36">
+<meta name="theme-color" content="#0a0a0a">
 <title>Đọc Kinh Thánh — Kinh Thánh Mỗi Ngày</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="manifest" href="manifest.json">
@@ -24,17 +24,20 @@
     <button class="theme-toggle" aria-label="Đổi giao diện sáng/tối"><span class="theme-label">🌙 Tối</span></button>
   </div>
 </header>
+<div class="read-progress" id="read-progress"></div>
 
 <main>
   <div class="picker" aria-label="Chọn sách và đoạn">
     <select id="book-sel" aria-label="Chọn sách"></select>
     <select id="chap-sel" aria-label="Chọn đoạn"></select>
   </div>
+  <div class="toolbar">
+    <button class="btn small" id="audio-btn">🔊 Nghe</button>
+  </div>
 
   <article class="card">
     <h1 class="chapter-head" id="chapter-head">…</h1>
     <div class="scripture" id="chapter-text"><p class="loading">Đang tải…</p></div>
-    <button class="btn small" id="audio-btn" style="width:100%;margin-bottom:0.2rem">🔊 Nghe đoạn này</button>
     <div class="pager">
       <button class="btn secondary" id="prev-btn">← Đoạn trước</button>
       <button class="btn secondary" id="next-btn">Đoạn sau →</button>
@@ -464,7 +467,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var audioCtrl = null;
   function stopAudio() {
     if (audioCtrl) { audioCtrl.stop(); audioCtrl = null; }
-    audioBtn.innerHTML = '🔊 Nghe đoạn này';
+    audioBtn.innerHTML = '🔊 Nghe';
     var txt = document.getElementById('chapter-text');
     if (txt) txt.querySelectorAll('.verse').forEach(function (el) { el.classList.remove('speaking'); });
   }
@@ -476,9 +479,9 @@ document.addEventListener('DOMContentLoaded', function () {
     if (audioCtrl) { stopAudio(); return; }
     if (!curData) return;
     var verses = curData.ch[cur.c - 1];
-    var parts = verses.map(function (t, i) { return 'Câu ' + (i + 1) + '. ' + t; });
+    var parts = verses.slice(); // read flowing text, no "câu N" prefixes
     var txt = document.getElementById('chapter-text');
-    audioBtn.innerHTML = '⏹️ Dừng đọc';
+    audioBtn.innerHTML = '⏹️ Dừng';
     audioCtrl = HKT.speakSequence(parts, function (idx) {
       txt.querySelectorAll('.verse').forEach(function (el) { el.classList.remove('speaking'); });
       var el = txt.querySelector('[data-v="' + (idx + 1) + '"]');
@@ -490,6 +493,16 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!audioCtrl) stopAudio();
   });
   window.addEventListener('pagehide', stopAudio);
+
+  /* ---- reading progress bar ---- */
+  var prog = document.getElementById('read-progress');
+  function updateProgress() {
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    prog.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + '%';
+  }
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  window.addEventListener('resize', updateProgress);
 
   /* ---- study notes panel ---- */
   function renderNotes() {
@@ -503,16 +516,20 @@ document.addEventListener('DOMContentLoaded', function () {
       return;
     }
     var html = '';
-    if (note.context) html += '<h3>🌍 Bối cảnh</h3><p>' + esc(note.context) + '</p>';
+    function sec(emoji, title, inner) {
+      return '<details class="note-sec" open><summary>' + emoji + ' ' + title +
+        '</summary><div class="note-sec-body">' + inner + '</div></details>';
+    }
+    if (note.context) html += sec('🌍', 'Bối cảnh', '<p>' + esc(note.context) + '</p>');
     if (note.exegesis && note.exegesis.length) {
-      html += '<h3>🔍 Giải nghĩa</h3><ul>' +
-        note.exegesis.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
+      html += sec('🔍', 'Giải nghĩa', '<ul>' +
+        note.exegesis.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>');
     }
     if (note.application && note.application.length) {
-      html += '<h3>🙌 Áp dụng</h3><ul>' +
-        note.application.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
+      html += sec('🙌', 'Áp dụng', '<ul>' +
+        note.application.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>');
     }
-    if (note.prayer) html += '<h3>🙏 Cầu nguyện</h3><div class="prayer">' + esc(note.prayer) + '</div>';
+    if (note.prayer) html += sec('🙏', 'Cầu nguyện', '<div class="prayer">' + esc(note.prayer) + '</div>');
     if (note.source) html += '<p class="src">Nguồn: ' + esc(note.source) + '</p>';
     body.innerHTML = html || '<p class="muted">Ghi chú cho đoạn này đang được soạn…</p>';
   }

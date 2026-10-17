@@ -1,51 +1,51 @@
 /* Kinh Thánh Mỗi Ngày — style.css (fresh, mobile-first) */
 
-/* ---------- palette ---------- */
+/* ---------- palette: minimal monochrome ---------- */
 :root {
   color-scheme: light;
-  --bg: #fbf8f2;
+  --bg: #fafafa;
   --surface: #ffffff;
-  --surface-2: #f4eee1;
-  --text: #232323;
-  --text-soft: #5c5c5c;
-  --navy: #1c2b4a;
-  --navy-deep: #141f36;
-  --gold: #a97b1f;
-  --gold-soft: #f3e7c9;
-  --border: #e2d8c2;
-  --mark: #ffe9a8;
-  --danger-soft: #f6e9e9;
+  --surface-2: #f0f0f0;
+  --text: #1a1a1a;
+  --text-soft: #737373;
+  --navy: #1a1a1a;
+  --navy-deep: #0a0a0a;
+  --gold: #1a1a1a;
+  --gold-soft: #f0f0f0;
+  --border: #e3e3e3;
+  --mark: #e2e2e2;
+  --danger-soft: #f0f0f0;
 }
 html[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #10141f;
-  --surface: #182031;
-  --surface-2: #1f2940;
-  --text: #ece7da;
-  --text-soft: #a8a294;
-  --navy: #d8b34a;
-  --navy-deep: #0d1220;
-  --gold: #d8b34a;
-  --gold-soft: #2c2513;
-  --border: #2c364e;
-  --mark: #5c4d14;
-  --danger-soft: #33201f;
+  --bg: #0a0a0a;
+  --surface: #141414;
+  --surface-2: #1e1e1e;
+  --text: #f2f2f2;
+  --text-soft: #a3a3a3;
+  --navy: #f2f2f2;
+  --navy-deep: #000000;
+  --gold: #f2f2f2;
+  --gold-soft: #1e1e1e;
+  --border: #2b2b2b;
+  --mark: #333333;
+  --danger-soft: #1e1e1e;
 }
 @media (prefers-color-scheme: dark) {
   html:not([data-theme]) {
     color-scheme: dark;
-    --bg: #10141f;
-    --surface: #182031;
-    --surface-2: #1f2940;
-    --text: #ece7da;
-    --text-soft: #a8a294;
-    --navy: #d8b34a;
-    --navy-deep: #0d1220;
-    --gold: #d8b34a;
-    --gold-soft: #2c2513;
-    --border: #2c364e;
-    --mark: #5c4d14;
-    --danger-soft: #33201f;
+    --bg: #0a0a0a;
+    --surface: #141414;
+    --surface-2: #1e1e1e;
+    --text: #f2f2f2;
+    --text-soft: #a3a3a3;
+    --navy: #f2f2f2;
+    --navy-deep: #000000;
+    --gold: #f2f2f2;
+    --gold-soft: #1e1e1e;
+    --border: #2b2b2b;
+    --mark: #333333;
+    --danger-soft: #1e1e1e;
   }
 }
 
@@ -74,7 +74,7 @@ html[data-theme="dark"] a, html:not([data-theme]) a { color: inherit; }
   position: sticky;
   top: 0;
   z-index: 20;
-  border-bottom: 3px solid var(--gold);
+  border-bottom: 1px solid var(--border);
 }
 .topbar-inner {
   max-width: 46rem;
@@ -117,7 +117,7 @@ html[data-theme="dark"] a, html:not([data-theme]) a { color: inherit; }
   border-radius: 14px;
   padding: 1.1rem 1.2rem;
   margin: 1rem 0;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  box-shadow: none;
 }
 .card h2 {
   margin: 0 0 0.6rem;
@@ -142,7 +142,7 @@ html[data-theme="dark"] a, html:not([data-theme]) a { color: inherit; }
   text-decoration: none;
   color: var(--text);
   font-weight: 600;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  box-shadow: none;
 }
 .nav-card .ico { font-size: 1.7rem; display: block; margin-bottom: 0.3rem; }
 .nav-card:active { transform: scale(0.98); }
@@ -199,7 +199,7 @@ html[data-theme="dark"] .btn { color: #141414; }
   padding: 0.7rem 1rem calc(0.7rem + env(safe-area-inset-bottom));
   display: none;
   z-index: 30;
-  box-shadow: 0 -2px 10px rgba(0,0,0,0.12);
+  box-shadow: none;
 }
 .action-bar.show { display: block; }
 .action-bar .ref { font-weight: 700; color: var(--gold); margin-bottom: 0.4rem; }
@@ -314,7 +314,7 @@ blockquote.dev-verse .ref { display: block; font-style: normal; color: var(--gol
   background: var(--surface);
   border-top: 1px solid var(--border);
   padding-bottom: env(safe-area-inset-bottom);
-  box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
+  box-shadow: none;
 }
 .tabbar a {
   flex: 1;
@@ -358,7 +358,7 @@ blockquote.dev-verse .ref { display: block; font-style: normal; color: var(--gol
   overflow-y: auto;
   transform: translateY(105%);
   transition: transform 0.26s ease-out;
-  box-shadow: 0 -4px 24px rgba(0,0,0,0.18);
+  box-shadow: none;
 }
 .sheet.show { transform: translateY(0); }
 .sheet-handle {
@@ -457,7 +457,7 @@ html[data-theme="dark"] .saved-tabs button.on { color: #141414; }
 
 /* ---------- v2: polish ---------- */
 .card { transition: box-shadow 0.2s; }
-.nav-card:hover { box-shadow: 0 3px 10px rgba(0,0,0,0.1); }
+.nav-card:hover { box-shadow: none; }
 .scripture { text-align: justify; }
 .chapter-head { letter-spacing: 0.02em; }
 .btn:active { transform: scale(0.97); }
@@ -485,3 +485,27 @@ html[data-theme="dark"] .saved-tabs button.on { color: #141414; }
   border-radius: 14px; border: 1px solid var(--border);
   margin-bottom: 1rem; display: block;
 }
+
+/* ---------- v3: mono-minimal interactive ---------- */
+.toolbar { display: flex; justify-content: flex-end; gap: 0.5rem; margin: 0 0 0.6rem; }
+.read-progress {
+  position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+  background: var(--gold); z-index: 50;
+}
+.note-sec { border-bottom: 1px solid var(--border); }
+.note-sec:last-of-type { border-bottom: none; }
+.note-sec summary {
+  cursor: pointer; list-style: none;
+  font-weight: 700; font-size: 1.02rem; color: var(--navy);
+  padding: 0.7rem 0; display: flex; align-items: center; gap: 0.4rem;
+}
+.note-sec summary::-webkit-details-marker { display: none; }
+.note-sec summary::after {
+  content: "−"; margin-left: auto; color: var(--text-soft); font-weight: 400;
+}
+.note-sec:not([open]) summary::after { content: "+"; }
+.note-sec-body { padding-bottom: 0.7rem; }
+.note-sec-body ul { margin: 0.3rem 0; padding-left: 1.3rem; }
+.scripture .verse { transition: background-color 0.15s ease; }
+.card { animation: fadein 0.25s ease; }
+@keyframes fadein { from { opacity: 0.4; } to { opacity: 1; } }
