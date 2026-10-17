@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var groups = [
       { id: 'sola', title: 'Năm Sola', match: function (id) { return id.indexOf('sola') === 0; } },
       { id: 'tulip', title: 'TULIP — Năm điểm Cải Chánh', match: function (id) { return id.indexOf('tulip') === 0; } },
-      { id: 'life', title: 'Đời sống Cơ Đốc', match: function () { return true; } }
+      { id: 'life', title: 'Đời sống Cơ Đốc', match: function (id) { return id.indexOf('sola') !== 0 && id.indexOf('tulip') !== 0; } }
     ];
     groups.forEach(function (g) {
       var items = topics.filter(function (t) { return g.match(t.id); });
